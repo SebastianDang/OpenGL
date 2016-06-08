@@ -61,7 +61,7 @@ public:
 	static void cursor_scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 	//Camera update function
-	static void updateCamera(glm::vec3 e, glm::vec3 d, glm::vec3 up);
+	static void camera_update_callback(glm::vec3 e, glm::vec3 d, glm::vec3 up);
 
 };
 

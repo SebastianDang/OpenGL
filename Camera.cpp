@@ -176,7 +176,7 @@ void Camera::object_follow()
 /* [Window Class] Update the camera, based on the current camera struct. Called whenever we want to switch to this camera. */
 void Camera::window_updateCamera()
 {
-	Window::updateCamera(this->camera.position, this->camera.lookat, this->camera.up);
+	Window::camera_update_callback(this->camera.position, this->camera.lookat, this->camera.up);
 }
 
 

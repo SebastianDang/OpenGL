@@ -35,9 +35,6 @@ public:
 	void camera_zoom(double y);
 	void object_follow();
 
-	//Functions for free world camera.
-	void camera_translate(glm::vec3 v, glm::vec3 w);
-
 	//Update the main window class with current camera coordinates.
 	void window_updateCamera();
 

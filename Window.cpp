@@ -240,7 +240,7 @@ void Window::cursor_scroll_callback(GLFWwindow* window, double xoffset, double y
 }
 
 /* Update the camera given e, d, and up vectors. We essentially rewrite the current camera. */
-void Window::updateCamera(glm::vec3 e, glm::vec3 d, glm::vec3 up)
+void Window::camera_update_callback(glm::vec3 e, glm::vec3 d, glm::vec3 up)
 {
 	Window::camera_pos = e;
 	Window::camera_look_at = d;
