@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <list>
 #include <vector>
-#include <irrKlang.h>
 
 #include "shader.h"
 #include "OBJObject.h"

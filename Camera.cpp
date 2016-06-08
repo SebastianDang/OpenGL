@@ -63,6 +63,7 @@ glm::vec3 Camera::set_cam_pos(glm::vec3 update)
 {
 	this->camera.position = update;
 	updateCamera();
+	return update;
 }
 
 /* Updates the current camera's lookat vector. */
@@ -70,6 +71,7 @@ glm::vec3 Camera::set_cam_look_at(glm::vec3 update)
 {
 	this->camera.lookat = update;
 	updateCamera();
+	return update;
 }
 
 /* Updates the current camera's up vector. */
@@ -77,6 +79,7 @@ glm::vec3 Camera::set_cam_up(glm::vec3 update)
 {
 	this->camera.up = update;
 	updateCamera();
+	return update;
 }
 
 /* Update the camera variables. */
