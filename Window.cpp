@@ -6,10 +6,34 @@ using namespace std;
 //Set the title of the program. This will remain static.
 const char* window_title = "The Beginning";
 
+//---------- Global window definitions ----------//
+
 //Define Mouse control status for idle, left hold, right hold.
 #define IDLE 0
 #define LEFT_HOLD 1
 #define RIGHT_HOLD 2
+
+//---------- Global window properties ----------//
+
+//Window size properties.
+int Window::width;//Width of the window (This will be set in window_resize callback).
+int Window::height;//Height of the window (This will be set in window_resize callback).
+//Mouse properties.
+int Window::mouse_status = IDLE;//Define the mouse status for any clicks.
+glm::vec3 Window::lastPoint;//Last point clicked.
+glm::vec3 Window::curPoint;//Current point clicked.
+//Camera properties.
+glm::vec3 Window::camera_pos = glm::vec3(0.0f, 0.0f, 20.0f);//Default.
+glm::vec3 Window::camera_look_at = glm::vec3(0.0f, 0.0f, 0.0f);//Default.
+glm::vec3 Window::camera_up = glm::vec3(0.0f, 1.0f, 0.0f);//Default. 
+//Matrix Coordinate Transformation properties.
+glm::mat4 Window::P;//Perspective.
+glm::mat4 Window::V;//View.
+//Frame Time calculation.
+float Window::lastFrameTime;//Last frame time recorded.
+float Window::delta;//The time since the last frame time, from the current frame time.
+
+//---------- Components that used to create the scene ----------//
 
 //Define any cameras here.
 
@@ -20,36 +44,21 @@ const char* window_title = "The Beginning";
 //Define any shaders here.
 GLint shaderProgram;
 
-//Window properties
-int Window::width;//Width of the window.
-int Window::height;//Height of the window.
-double Window::x;//Current mouse x coordinate.
-double Window::y;//Current mouse y coordinate.
-int Window::mouse_status = IDLE;//Define the mouse status for any clicks.
-glm::vec3 Window::lastPoint;//Last point clicked.
-glm::vec3 Window::camera_pos = glm::vec3(0.0f, 0.0f, 20.0f);//Default.
-glm::vec3 Window::camera_look_at = glm::vec3(0.0f, 0.0f, 0.0f);//Default.
-glm::vec3 Window::camera_up = glm::vec3(0.0f, 1.0f, 0.0f);//Default. 
-glm::mat4 Window::P;//Perspective.
-glm::mat4 Window::V;//View.
-
-//Calculate frame time.
-float Window::lastFrameTime;
-float Window::delta;
-
+/* Initialize any objects in the scene here. */
 void Window::initialize_objects()
 {
 	//Create shaders.
 	shaderProgram = LoadShaders("../shader.vert", "../shader.frag");
-
 }
 
+/* Deconstructor, deletes all initialized objects for a proper cleanup. */
 void Window::clean_up()
 {
 	//Delete shaders.
 	glDeleteProgram(shaderProgram);
 }
 
+/* Create window is called to initialize the window. */
 GLFWwindow* Window::create_window(int width, int height)
 {
 	//Initialize GLFW
@@ -61,17 +70,6 @@ GLFWwindow* Window::create_window(int width, int height)
 
 	//4x antialiasing
 	glfwWindowHint(GLFW_SAMPLES, 4);
-
-	//------------------------------ Windows (both 32 and 64 bit versions) ------------------------------ //
-	#ifdef _WIN32
-
-	//----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
-	#else
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	#endif
 
 	//Create the GLFW window
 	GLFWwindow* window = glfwCreateWindow(width, height, window_title, NULL, NULL);
@@ -96,11 +94,12 @@ GLFWwindow* Window::create_window(int width, int height)
 	Window::resize_callback(window, width, height);
 
 	//Set the initial frame time.
-	Window::lastFrameTime = glfwGetTime();
+	Window::lastFrameTime = (float)glfwGetTime();
 
 	return window;
 }
 
+/* Window callback function on a resize. Resets the perspective and view for proper coordinate transformation. */
 void Window::resize_callback(GLFWwindow* window, int width, int height)
 {
 	Window::width = width;
@@ -115,15 +114,17 @@ void Window::resize_callback(GLFWwindow* window, int width, int height)
 	}
 }
 
+/* Idle callback function. This will call itself repeatedly as long as the program is running. */
 void Window::idle_callback()
 {
-	//Get the frame time.
-	float currentFrameTime = glfwGetTime();
-	Window::delta = (currentFrameTime - Window::lastFrameTime);
-	Window::lastFrameTime = currentFrameTime;
+	//Calculate the frame time.
+	float currentFrameTime = (float)glfwGetTime();//Get the current time.
+	Window::delta = (currentFrameTime - Window::lastFrameTime);//Calculate the change from this frame time, to the old frame time.
+	Window::lastFrameTime = currentFrameTime;//Record the (new per calculation) old frame time.
 
 }
 
+/* Display callback function. Whenever contents need to be redisplayed, this will be called. We render, or redraw any part of the scene here. */
 void Window::display_callback(GLFWwindow* window)
 {
 	//Clear the color and depth buffers
@@ -131,7 +132,7 @@ void Window::display_callback(GLFWwindow* window)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Draw the entire scene.
-	Window::redrawScene();
+	Window::drawScene();
 	
 	//Gets events, including input such as keyboard and mouse or window resizing
 	glfwPollEvents();
@@ -139,20 +140,19 @@ void Window::display_callback(GLFWwindow* window)
 	glfwSwapBuffers(window);
 }
 
-void Window::redrawScene()
+/* Perform any draw methods here. We handle this separately to avoid changing the swap buffer in display_callback. */
+void Window::drawScene()
 {
 	//Use the shader of programID
 	glUseProgram(shaderProgram);
 	//Render the objects
-	//object_1->draw(shaderProgram);
 
 }
-
 
 /* Handle Key input. */
 void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	/* Any global key definitions */
+	//---------- Any global key definitions for holds and releases ----------//
 	//Define shift keys for capital letters.
 	int Lshift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
 	int Rshift = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
@@ -163,7 +163,7 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 	int dKey = glfwGetKey(window, GLFW_KEY_D);
 
 
-	//---------- Anything below this will be global keys. ----------//
+	//---------- Any global keys presses that affect the window directly ----------//
 	//Check for a single key press (Not holds)
 	if (action == GLFW_PRESS)
 	{
@@ -186,15 +186,13 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 	}
 }
 
-/* Handle mouse movement. */
+/* Handle mouse movement input. */
 void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	//Update current mouse position.
 	glfwGetCursorPos(window, &xpos, &ypos);
-	Window::x = xpos;
-	Window::y = ypos;
 	//Get current mouse position.
-	glm::vec3 point = glm::vec3(Window::x, Window::y, 0.0f);
+	Window::curPoint = glm::vec3(xpos, ypos, 0.0f);
 
 	//On left drag, we perform rotations. Relative to the object.
 	if (Window::mouse_status == LEFT_HOLD)
@@ -209,23 +207,21 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 
 }
 
-/* Handle mouse button input. Status handles if left button or right button was clicked and held. */
+/* Handle mouse button input. This handles the status if left button or right button was clicked and held. */
 void Window::cursor_button_callback(GLFWwindow* window, int button, int action, int mods) 
 {
 	//Define left and right clicks.
 	int left_click = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
 	int right_click = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
-	//Get current mouse position.
-	glm::vec3 mouse_position = glm::vec3((float)Window::x, (float)Window::y, 0.0f);
 	//Left click hold will save the position that the mouse was clicked and save it.
 	if (left_click == GLFW_PRESS && right_click == GLFW_RELEASE && Window::mouse_status == IDLE) {
 		Window::mouse_status = LEFT_HOLD;
-		Window::lastPoint = mouse_position;
+		Window::lastPoint = Window::curPoint;
 	}
 	//Right click hold will save the position that the mouse was clicked and save it.
 	else if (right_click == GLFW_PRESS && left_click == GLFW_RELEASE && Window::mouse_status == IDLE) {
 		Window::mouse_status = RIGHT_HOLD;
-		Window::lastPoint = mouse_position;
+		Window::lastPoint = Window::curPoint;
 	}
 	//If left click is held, then released, reset back to idle.
 	else if (left_click == GLFW_RELEASE && Window::mouse_status == LEFT_HOLD) {

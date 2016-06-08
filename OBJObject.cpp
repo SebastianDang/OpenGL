@@ -454,7 +454,7 @@ void OBJObject::drawBox(GLuint shaderProgram) {
 	glBindVertexArray(VAOBOX);
 	glDisable(GL_CULL_FACE);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDrawArrays(GL_TRIANGLES, 0, boxCoords.size());
+	glDrawArrays(GL_TRIANGLES, 0, (GLsizei)boxCoords.size());
 	glBindVertexArray(0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

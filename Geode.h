@@ -2,7 +2,7 @@
 #ifndef GEODE_H
 #define GEODE_H
 
-#include "Window.h"
+#include "OBJObject.h"
 #include "Node.h"
 
 

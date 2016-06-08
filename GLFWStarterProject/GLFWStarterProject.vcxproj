@@ -19,27 +19,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Bezier.h" />
-    <ClInclude Include="..\Cake.h" />
-    <ClInclude Include="..\Bear.h" />
     <ClInclude Include="..\Camera.h" />
-    <ClInclude Include="..\Cylinder.h" />
     <ClInclude Include="..\Definitions.h" />
     <ClInclude Include="..\Geode.h" />
     <ClInclude Include="..\Group.h" />
     <ClInclude Include="..\Light.h" />
     <ClInclude Include="..\MatrixTransform.h" />
     <ClInclude Include="..\Node.h" />
-    <ClInclude Include="..\Particle.h" />
-    <ClInclude Include="..\Pod.h" />
-    <ClInclude Include="..\Scenery.h" />
-    <ClInclude Include="..\SkyBox.h" />
     <ClInclude Include="..\main.h" />
     <ClInclude Include="..\OBJObject.h" />
     <ClInclude Include="..\shader.h" />
-    <ClInclude Include="..\Terrain.h" />
-    <ClInclude Include="..\Track.h" />
-    <ClInclude Include="..\Water.h" />
     <ClInclude Include="..\Window.h" />
   </ItemGroup>
   <ItemGroup>

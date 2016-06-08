@@ -2,12 +2,13 @@
 
 #include "Window.h"
 #include "Definitions.h"
+#include "OBJObject.h"
 
 #ifndef CAMERA_H
 #define CAMERA_H
 class Camera {
 private:
-	Global_Camera camera;
+	Struct_Camera camera;
 
 	OBJObject * toFollow;
 

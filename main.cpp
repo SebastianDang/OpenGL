@@ -2,12 +2,14 @@
 
 GLFWwindow* window;
 
+/* Error callback to write error to the console. */
 void error_callback(int error, const char* description)
 {
 	// Print error
 	fputs(description, stderr);
 }
 
+/* Setup callback to handle openGL setup. */
 void setup_callbacks()
 {
 	// Set the error callback
@@ -22,6 +24,7 @@ void setup_callbacks()
 	glfwSetFramebufferSizeCallback(window, Window::resize_callback);
 }
 
+/* Setup glew. */
 void setup_glew()
 {
 	// Initialize GLEW
@@ -35,16 +38,9 @@ void setup_glew()
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 }
 
+/* Setup openGL settings. */
 void setup_opengl_settings()
 {
-	//------------------------------ Windows (both 32 and 64 bit versions) ------------------------------ //
-	#ifdef _WIN32
-
-	//----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
-	#else
-		glewExperimental = GL_TRUE;
-	#endif
-
 	// Setup GLEW
 	setup_glew();
 	// Enable multisampling
@@ -54,14 +50,15 @@ void setup_opengl_settings()
 	// Related to shaders and z value comparisons for the depth buffer
 	glDepthFunc(GL_LEQUAL);
 	// Set polygon drawing mode to fill front and back of each polygon
-	// You can also use the paramter of GL_LINE instead of GL_FILL to see wireframes
+	// You can also use the parameter of GL_LINE instead of GL_FILL to see wireframes
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	// Disable backface culling to render both sides of polygons
 	glDisable(GL_CULL_FACE);
 	// Set clear color
-	glClearColor(0.2f, 0.2f, 0.5f, 1.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 }
 
+/* Print the version of openGL and GLSL. */
 void print_versions()
 {
 	// Get info of GPU and supported OpenGL version
@@ -76,6 +73,7 @@ void print_versions()
 
 int main(void)
 {
+	//---------- OpenGL ----------//
 	// Create the GLFW window
 	window = Window::create_window(640, 480);
 	// Print OpenGL and GLSL versions
@@ -87,6 +85,7 @@ int main(void)
 	// Initialize objects/pointers for rendering
 	Window::initialize_objects();
 
+	//---------- Window display ----------//
 	// Loop while GLFW window should stay open
 	while (!glfwWindowShouldClose(window))
 	{
@@ -96,6 +95,7 @@ int main(void)
 		Window::idle_callback();
 	}
 
+	//---------- Deconstructor ----------//
 	Window::clean_up();
 	// Destroy the window
 	glfwDestroyWindow(window);

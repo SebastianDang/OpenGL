@@ -4,13 +4,12 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+
 using namespace std;
 
 #include <stdlib.h>
 #include <string.h>
-
 #include <GL/glew.h>
-
 #include "shader.h"
 
 GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
@@ -52,7 +51,6 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 	GLint Result = GL_FALSE;
 	int InfoLogLength;
 
-
 	// Compile Vertex Shader
 	printf("Compiling shader : %s\n", vertex_file_path);
 	char const * VertexSourcePointer = VertexShaderCode.c_str();
@@ -67,8 +65,6 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 		glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
 		printf("%s\n", &VertexShaderErrorMessage[0]);
 	}
-
-
 
 	// Compile Fragment Shader
 	printf("Compiling shader : %s\n", fragment_file_path);
@@ -85,8 +81,6 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 		printf("%s\n", &FragmentShaderErrorMessage[0]);
 	}
 
-
-
 	// Link the program
 	printf("Linking program\n");
 	GLuint ProgramID = glCreateProgram();
@@ -102,7 +96,6 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
 		printf("%s\n", &ProgramErrorMessage[0]);
 	}
-
 	
 	glDetachShader(ProgramID, VertexShaderID);
 	glDetachShader(ProgramID, FragmentShaderID);
