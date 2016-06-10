@@ -7,11 +7,10 @@ using namespace std;
 #define RUN_SPEED  500.0f
 #define TURN_SPEED  900.0f
 
-
 /* Initialize the object, parse it and set up buffers. */
 OBJObject::OBJObject(const char *filepath, int material) 
 {
-	//Initialize movement.
+	//Initialize object components.
 	this->currentDirection = glm::vec3(0.0f, 0.0f, 1.0f);
 	this->currentSpeed = 0.0f;
 	this->currentTurnSpeed = 0.0f;
@@ -24,10 +23,6 @@ OBJObject::OBJObject(const char *filepath, int material)
 	this->setupObject();
 	//Setup the object material.
 	this->setupMaterial();
-	//Initialize BoxCoords for the collision box.
-	this->setupGeometry();
-	this->bindCube();
-	this->collisionFlag = 0;
 }
 
 /* Deconstructor to safely delete when finished. */
@@ -75,6 +70,12 @@ void OBJObject::parse(const char *filepath)
 			normals.push_back(normalVertex);
 			continue;
 		}
+		//Read in lines that start with "vt". Add into textures.
+		if (strcmp(buf, "vt") == 0) {
+			glm::vec2 texCoord;
+			fscanf(objFile, "%f %f\n", &texCoord.x, &texCoord.y);
+			continue;
+		}
 		//Read in lines that start with "f". Add into indices.
 		if (strcmp(buf, "f") == 0) {//Note: Read only left or right side since they are identical on both sides.
 			unsigned int faces_v[3], faces_vn[3];
@@ -85,7 +86,6 @@ void OBJObject::parse(const char *filepath)
 			indices.push_back(faces_v[1] - 1);
 			indices.push_back(faces_v[2] - 1);
 			continue;
-
 		}
 	}
 	fclose(objFile);

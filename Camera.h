@@ -8,10 +8,20 @@
 #define CAMERA_H
 class Camera {
 private:
+	//Camera variables
 	Struct_Camera camera;
+	Struct_Camera saved_camera;
 
+	//Eular Angles.
+	GLfloat yaw;
+	GLfloat pitch;
+	GLfloat saved_yaw;
+	GLfloat saved_pitch;
+
+	//Object to follow for third person.
 	OBJObject * toFollow;
-
+	
+	//Setup function.
 	void setupCamera(glm::vec3 e, glm::vec3 d, glm::vec3 up);
 	
 	//Updates the corresponding camera vectors.
@@ -22,21 +32,19 @@ public:
 	Camera(OBJObject * object_follow);
 	~Camera();
 
-	//Manipulate or change the camera components, if necessary.
-	glm::vec3 get_cam_pos();
-	glm::vec3 get_cam_look_at();
-	glm::vec3 get_cam_up();
-	glm::vec3 set_cam_pos(glm::vec3 update);
-	glm::vec3 set_cam_look_at(glm::vec3 update);
-	glm::vec3 set_cam_up(glm::vec3 update);
-
-	//Functions for following an object.
-	void camera_rotate_around(glm::vec3 v, glm::vec3 w);
-	void camera_zoom(double y);
-	void object_follow();
-
 	//Update the main window class with current camera coordinates.
 	void window_updateCamera();
 
+	//Functions for following an object.
+	void object_follow();
+	void third_person_rotate(glm::vec3 v, glm::vec3 w);
+	void third_person_zoom(double y);
+
+	//Functions for first person view.
+	void first_person_movement(glm::vec3 v, glm::vec3 w);
+
+	//Function to switch between first person and third person view.
+	void save();
+	void load();
 };
 #endif

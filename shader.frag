@@ -83,6 +83,7 @@ void main()
 	}
     //color = vec4(result.x, result.y, result.z, 1.0f);
 	
+    /*
 	//Dynamic Environment mapping.
     //Diffuse
 	vec4 diffuse_color = vec4(result.x, result.y, result.z, 1.0f);
@@ -102,7 +103,8 @@ void main()
 			color = 0.0 * color;
 		}
 	}
-
+    */
+	color = vec4(1.0, 0.0, 0.0, 1.0);
 }
 
 //Calculates the color when using a directional light.

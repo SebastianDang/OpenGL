@@ -10,6 +10,7 @@ private:
 	std::vector<Container> containers;//[v, vn, (s,t)]
 	std::vector<glm::vec3> vertices;//v
 	std::vector<glm::vec3> normals;//vn
+	std::vector<glm::vec2> texCoords;//vt
 	std::vector<unsigned int> indices;//f
 	std::vector<Texture> textures;//List of textures
 

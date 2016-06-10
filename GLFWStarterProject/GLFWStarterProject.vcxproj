@@ -29,6 +29,7 @@
     <ClInclude Include="..\main.h" />
     <ClInclude Include="..\OBJObject.h" />
     <ClInclude Include="..\shader.h" />
+    <ClInclude Include="..\SkyBox.h" />
     <ClInclude Include="..\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -41,11 +42,14 @@
     <ClCompile Include="..\main.cpp" />
     <ClCompile Include="..\OBJObject.cpp" />
     <ClCompile Include="..\shader.cpp" />
+    <ClCompile Include="..\SkyBox.cpp" />
     <ClCompile Include="..\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shader.frag" />
     <None Include="..\shader.vert" />
+    <None Include="..\skybox.frag" />
+    <None Include="..\skybox.vert" />
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

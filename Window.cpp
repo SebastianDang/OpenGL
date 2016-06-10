@@ -1,5 +1,9 @@
 #include "window.h"
 #include "group.h"
+#include "OBJObject.h"
+#include "Camera.h"
+#include "skybox.h"
+
 
 using namespace std;
 
@@ -36,19 +40,32 @@ float Window::delta;//The time since the last frame time, from the current frame
 //---------- Components that used to create the scene ----------//
 
 //Define any cameras here.
+Camera * world_camera;
+bool firstMouse = true;
 
 //Define any objects here.
+OBJObject * test;
 
 //Define any environment variables here. We should always have the skybox!
+SkyBox * skybox;
 
 //Define any shaders here.
 GLint shaderProgram;
+GLint shaderProgram_skybox;
 
 /* Initialize any objects in the scene here. */
 void Window::initialize_objects()
 {
+	test = new OBJObject("../assets/obj/pod.obj", 1);
 	//Create shaders.
 	shaderProgram = LoadShaders("../shader.vert", "../shader.frag");
+
+	world_camera = new Camera(test);
+	world_camera->window_updateCamera();
+
+	skybox = new SkyBox();
+	shaderProgram_skybox = LoadShaders("../skybox.vert", "../skybox.frag");
+
 }
 
 /* Deconstructor, deletes all initialized objects for a proper cleanup. */
@@ -96,6 +113,9 @@ GLFWwindow* Window::create_window(int width, int height)
 	//Set the initial frame time.
 	Window::lastFrameTime = (float)glfwGetTime();
 
+	//Hide the mouse.
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
 	return window;
 }
 
@@ -112,16 +132,17 @@ void Window::resize_callback(GLFWwindow* window, int width, int height)
 		P = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 1000.0f);
 		V = glm::lookAt(Window::camera_pos, Window::camera_look_at, Window::camera_up);
 	}
+
+	//Set the lastPoint to be the center.
+	Window::lastPoint = glm::vec3(float(width / 2), float(height / 2), 0.0f);
 }
 
 /* Idle callback function. This will call itself repeatedly as long as the program is running. */
 void Window::idle_callback()
 {
 	//Calculate the frame time.
-	float currentFrameTime = (float)glfwGetTime();//Get the current time.
-	Window::delta = (currentFrameTime - Window::lastFrameTime);//Calculate the change from this frame time, to the old frame time.
-	Window::lastFrameTime = currentFrameTime;//Record the (new per calculation) old frame time.
-
+	Window::frame_time_callback();
+	//Perform an animations here.
 }
 
 /* Display callback function. Whenever contents need to be redisplayed, this will be called. We render, or redraw any part of the scene here. */
@@ -138,6 +159,7 @@ void Window::display_callback(GLFWwindow* window)
 	glfwPollEvents();
 	//Swap buffers
 	glfwSwapBuffers(window);
+	//glFinish();
 }
 
 /* Perform any draw methods here. We handle this separately to avoid changing the swap buffer in display_callback. */
@@ -146,7 +168,20 @@ void Window::drawScene()
 	//Use the shader of programID
 	glUseProgram(shaderProgram);
 	//Render the objects
+	test->draw(shaderProgram);
+	//Use the shader of programID
+	glUseProgram(shaderProgram_skybox);
+	//Render the objects
+	skybox->draw(shaderProgram_skybox);
+}
 
+/* Perform updates to the frame time for any animations. */
+void Window::frame_time_callback()
+{
+	//Calculate the frame time.
+	float currentFrameTime = (float)glfwGetTime();//Get the current time.
+	Window::delta = (currentFrameTime - Window::lastFrameTime);//Calculate the change from this frame time, to the old frame time.
+	Window::lastFrameTime = currentFrameTime;//Record the (new per calculation) old frame time.
 }
 
 /* Handle Key input. */
@@ -161,7 +196,6 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 	int aKey = glfwGetKey(window, GLFW_KEY_A);
 	int sKey = glfwGetKey(window, GLFW_KEY_S);
 	int dKey = glfwGetKey(window, GLFW_KEY_D);
-
 
 	//---------- Any global keys presses that affect the window directly ----------//
 	//Check for a single key press (Not holds)
@@ -194,17 +228,27 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 	//Get current mouse position.
 	Window::curPoint = glm::vec3(xpos, ypos, 0.0f);
 
+	//FPS Mouse.
+	if (firstMouse)
+	{
+		Window::lastPoint = Window::curPoint;
+		firstMouse = false;
+	}
+	world_camera->first_person_movement(Window::lastPoint, Window::curPoint);
+	world_camera->window_updateCamera();
+
 	//On left drag, we perform rotations. Relative to the object.
 	if (Window::mouse_status == LEFT_HOLD)
 	{
-
+		world_camera->third_person_rotate(Window::lastPoint, Window::curPoint);
+		world_camera->window_updateCamera();
 	}
 	//On right drag, we perform translations. Relative to the object.
 	if (Window::mouse_status == RIGHT_HOLD)
 	{
-
+		world_camera->first_person_movement(Window::lastPoint, Window::curPoint);
+		world_camera->window_updateCamera();
 	}
-
 }
 
 /* Handle mouse button input. This handles the status if left button or right button was clicked and held. */
