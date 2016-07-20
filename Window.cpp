@@ -3,6 +3,7 @@
 #include "OBJObject.h"
 #include "Camera.h"
 #include "skybox.h"
+#include "Water.h"
 
 
 using namespace std;
@@ -37,21 +38,22 @@ glm::mat4 Window::V;//View.
 float Window::lastFrameTime;//Last frame time recorded.
 float Window::delta;//The time since the last frame time, from the current frame time.
 
-//---------- Components that used to create the scene ----------//
+//---------- Components that are used to create the scene ----------//
 
 //Define any cameras here.
 Camera * world_camera;
-bool firstMouse = true;
 
 //Define any objects here.
 OBJObject * test;
 
 //Define any environment variables here. We should always have the skybox!
 SkyBox * skybox;
+Water * water;
 
 //Define any shaders here.
 GLint shaderProgram;
 GLint shaderProgram_skybox;
+GLint shaderProgram_water;
 
 /* Initialize any objects in the scene here. */
 void Window::initialize_objects()
@@ -65,6 +67,9 @@ void Window::initialize_objects()
 
 	skybox = new SkyBox();
 	shaderProgram_skybox = LoadShaders("../skybox.vert", "../skybox.frag");
+
+	water = new Water(0, 0);
+	shaderProgram_water = LoadShaders("../water.vert", "../water.frag");
 
 }
 
@@ -148,15 +153,44 @@ void Window::idle_callback()
 /* Display callback function. Whenever contents need to be redisplayed, this will be called. We render, or redraw any part of the scene here. */
 void Window::display_callback(GLFWwindow* window)
 {
+	//Gets events, including input such as keyboard and mouse or window resizing
+	glfwPollEvents();
+
+	//--------------- WATER CODE ---------------//
+
+	//Render the reflection texture.
+	glBindFramebuffer(GL_FRAMEBUFFER, water->reflection_FBO);
 	//Clear the color and depth buffers
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//Draw the entire scene.
-	Window::drawScene();
+	Window::drawScene();//Draw the scene once.
+
+	//Render the refraction texture.
+	glBindFramebuffer(GL_FRAMEBUFFER, water->refraction_FBO);
+	//Clear the color and depth buffers
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	Window::drawScene();//Draw the scene twice.
+
+	//--------------- END WATER CODE ---------------//
+
+	//Render the entire scene now.
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//Clear the color and depth buffers
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glEnable(GL_CLIP_DISTANCE0);
+
+	Window::drawScene();//Finally, render the entire scene.
+
+	//Draw the water.
+	glUseProgram(shaderProgram_water);
+	water->draw(shaderProgram_water);
 	
-	//Gets events, including input such as keyboard and mouse or window resizing
-	glfwPollEvents();
 	//Swap buffers
 	glfwSwapBuffers(window);
 	//glFinish();
@@ -197,6 +231,23 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 	int sKey = glfwGetKey(window, GLFW_KEY_S);
 	int dKey = glfwGetKey(window, GLFW_KEY_D);
 
+	if (wKey == GLFW_PRESS)
+	{
+		printf("W\n");
+	}
+	if (aKey == GLFW_PRESS)
+	{
+		printf("A\n");
+	}
+	if (sKey == GLFW_PRESS)
+	{
+		printf("S\n");
+	}
+	if (dKey == GLFW_PRESS)
+	{
+		printf("D\n");
+	}
+
 	//---------- Any global keys presses that affect the window directly ----------//
 	//Check for a single key press (Not holds)
 	if (action == GLFW_PRESS)
@@ -217,6 +268,9 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 		}
 		if (key == GLFW_KEY_4) {
 		}
+		if (key == GLFW_KEY_T) {
+			water->toggleDrawMode();
+		}
 	}
 }
 
@@ -228,15 +282,6 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 	//Get current mouse position.
 	Window::curPoint = glm::vec3(xpos, ypos, 0.0f);
 
-	//FPS Mouse.
-	if (firstMouse)
-	{
-		Window::lastPoint = Window::curPoint;
-		firstMouse = false;
-	}
-	world_camera->first_person_movement(Window::lastPoint, Window::curPoint);
-	world_camera->window_updateCamera();
-
 	//On left drag, we perform rotations. Relative to the object.
 	if (Window::mouse_status == LEFT_HOLD)
 	{
@@ -246,8 +291,7 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 	//On right drag, we perform translations. Relative to the object.
 	if (Window::mouse_status == RIGHT_HOLD)
 	{
-		world_camera->first_person_movement(Window::lastPoint, Window::curPoint);
-		world_camera->window_updateCamera();
+
 	}
 }
 
@@ -280,7 +324,8 @@ void Window::cursor_button_callback(GLFWwindow* window, int button, int action, 
 /* Handle mouse scroll input. */
 void Window::cursor_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-
+	world_camera->third_person_zoom(yoffset);
+	world_camera->window_updateCamera();
 }
 
 /* Update the camera given e, d, and up vectors. We essentially rewrite the current camera. */

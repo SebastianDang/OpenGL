@@ -30,6 +30,7 @@
     <ClInclude Include="..\OBJObject.h" />
     <ClInclude Include="..\shader.h" />
     <ClInclude Include="..\SkyBox.h" />
+    <ClInclude Include="..\Water.h" />
     <ClInclude Include="..\Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -43,6 +44,7 @@
     <ClCompile Include="..\OBJObject.cpp" />
     <ClCompile Include="..\shader.cpp" />
     <ClCompile Include="..\SkyBox.cpp" />
+    <ClCompile Include="..\Water.cpp" />
     <ClCompile Include="..\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +52,8 @@
     <None Include="..\shader.vert" />
     <None Include="..\skybox.frag" />
     <None Include="..\skybox.vert" />
+    <None Include="..\water.frag" />
+    <None Include="..\water.vert" />
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -1,36 +1,28 @@
 #version 330 core
 
-//The vertex shader gets called once per vertex.
-
 //Define position, normal, and texture defined in the Container.
 layout (location = 0) in vec3 vertex;
 layout (location = 1) in vec3 normal;
-
+layout (location = 2) in vec2 texCoords;
 
 //Define uniform MVP: model, view, projection passed from the object.
 uniform mat4 MVP;
 uniform mat4 model;
-uniform float time; //elasped time
+uniform mat4 view;
+uniform mat4 projection;
 
-out vec3 FragNormal;
+//Define any out variables for the fragment shader.
+out vec4 clipSpace;
 out vec3 FragPos;
-
-//shader constants
-const float amplitude = 0.3;
-const float frequency = 10;
-const float PI = 3.14159;
-
+out vec3 FragNormal;
+out vec2 FragTexCoords;
 
 void main()
 {
-    /* Ripple Effect */
-    //Get the Euclidean distance of the current vertex from the center of the mesh
-    float dist = length(vertex);
-    //Create a sin/cos function using the distance, multiply frequency and add the elapsed time
-    float y = amplitude*sin(-PI*dist*frequency+time) +  amplitude*cos(-PI*dist*frequency+time);
-    //Multiply the MVP matrix with the new position to get the clipspace position.
-    gl_Position = MVP * vec4(vertex.x, vertex.y - y*.5, vertex.z, 1);
-	//Update variables to pass to the fragment shader.
-    FragPos = vec3(model * vec4(vertex.x, y, vertex.z, 1.0f));
-    FragNormal = vec3( mat4(transpose(inverse(model)))  * vec4(normal.x, normal.y, normal.z, 1.0f));
+	clipSpace = MVP * vec4(vertex.x, 0.0, vertex.z, 1.0);
+    gl_Position = MVP * vec4(vertex.x, 0.0, vertex.z, 1.0);
+
+	FragPos = vec3(model * vec4(vertex.x, vertex.y, vertex.z, 1.0));
+	FragNormal = vec3( mat4(transpose(inverse(model)))  * vec4(normal.x, normal.y, normal.z, 1.0f));
+	FragTexCoords = texCoords;
 }

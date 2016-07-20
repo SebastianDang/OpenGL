@@ -183,7 +183,7 @@ void Camera::save()
 	this->saved_yaw = yaw;
 }
 
-/* Load the saved camera components. */
+/* Load the last saved camera components. */
 void Camera::load()
 {
 	this->camera = saved_camera;

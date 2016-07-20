@@ -43,7 +43,6 @@ uniform vec3 lightColor;
 uniform vec3 viewPos;
 uniform samplerCube skybox;
 uniform float reflect_intensity;
-uniform bool toon_shade;
 
 
 //Define any in variables from the vertex shader.
@@ -61,6 +60,7 @@ vec3 CalcSpotLight(SpotLight spotLight, vec3 norm, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
+
 	vec3 result = vec3(0.0f, 0.0f, 0.0f);//Set to black in case all lights are off.
 
 	//Light computation for the fragment shader. [DISABLED]
@@ -83,7 +83,6 @@ void main()
 	}
     //color = vec4(result.x, result.y, result.z, 1.0f);
 	
-    /*
 	//Dynamic Environment mapping.
     //Diffuse
 	vec4 diffuse_color = vec4(result.x, result.y, result.z, 1.0f);
@@ -94,17 +93,6 @@ void main()
 	//Combined
 	color = diffuse_color + reflect_color;
 
-	if (toon_shade)
-	{
-		float edge = dot(normalize(viewPos - FragPos), FragNormal);
-		edge = max(0, edge);
-		if (edge < 0.01)
-		{
-			color = 0.0 * color;
-		}
-	}
-    */
-	color = vec4(1.0, 0.0, 0.0, 1.0);
 }
 
 //Calculates the color when using a directional light.
@@ -117,18 +105,6 @@ vec3 CalcDirLight(DirLight dirLight, vec3 norm, vec3 viewDir)
     vec3 lightDir = normalize(-dirLight.direction);//No calculation, just the light direction.
     float maxDiffuse = max(0.0, dot(norm, lightDir));
 	vec3 l_diffuse = material.diffuse * dirLight.diffuse * maxDiffuse;
-
-	//Toon shading
-	float toon_shade_effect = 1.0;
-	if (toon_shade)
-	{
-		if(maxDiffuse > 0.98)	toon_shade_effect = 1.0;
-		else if(maxDiffuse > 0.95)	toon_shade_effect = 0.9;
-		else if(maxDiffuse > 0.5)	toon_shade_effect = 0.7;
-		else if(maxDiffuse > 0.05)	toon_shade_effect = 0.35;
-		else	toon_shade_effect = 1.0;
-	}
-	l_diffuse = toon_shade_effect * l_diffuse;
 
 	//Calculate Specular: Ks * Ls * max (0, r dot v) ^ alpha
 	vec3 reflectDir = reflect(-lightDir, norm);

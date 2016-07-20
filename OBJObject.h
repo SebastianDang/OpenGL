@@ -21,7 +21,7 @@ private:
 	int material;//Material selection
 
 	//Parse the object to create it.
-	void parse(const char* filepath);
+	int parse(const char* filepath);
 
 	//Setup initial object materials, lighting.
 	void setupObject();
@@ -61,7 +61,7 @@ public:
 	void bindCube();
 	void drawBox(GLuint shaderProgram);
 
-	float minX, minY, minZ, maxX, maxY, maxZ, avgX, avgY, avgZ, scale_v;
+	float min_X, min_Y, min_Z, max_X, max_Y, max_Z, avg_X, avg_Y, avg_Z, scale_v;
 	glm::vec3 average;
 
 	float longestDim;

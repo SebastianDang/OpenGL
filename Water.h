@@ -10,6 +10,7 @@
 #define Water_h
 
 #include "Window.h"
+#include "Definitions.h"
 
 //A struct to hold a control point of the surface.
 struct Point {
@@ -21,34 +22,36 @@ struct Point {
 class Water
 {
 private:
-	//Water properties.
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec3> normals;
-	std::vector<int> indices;
-	unsigned int level_of_detail;
+	//Variables to keep track of information.
+	std::vector<Container> containers;//[v, vn, (s,t)]
+	std::vector<glm::vec3> vertices;//v
+	std::vector<glm::vec3> normals;//vn
+	std::vector<glm::vec2> texCoords;//(s,t)
+	std::vector<unsigned int> indices;//indices.
 	//GLSL properties.
-	int draw_mode;
-	glm::mat4 toWorld;
-	GLuint VBO, VAO, EBO, VBONORM;
+	GLuint VAO, VBO, EBO;
 	//Intialization functions.
 	void setupGeometry();
-	Point CalculateU(float t, int row);
-	Point CalculateV(float t, Point* pnts);
-	Point Calculate(float u, float v);
 	void setupWater();
+	//Frame buffers for water reflection/refraction.
+	void initializeReflection();
+	void initializeRefraction();
+	//Misc.
+	int draw_mode;
 
 public:
+	//Constructor methods.
 	Water(int x_d, int z_d);
-	Water(int x_d, int z_d, GLuint skyBox_texture);
     ~Water();
-
 	//Determine the Water's position in the world.
 	int x, z;
-
-	GLuint skyTexture;
-
+	glm::mat4 toWorld;
+	//Draw and update methods.
 	void toggleDrawMode();
-	void draw(GLuint);
+	void draw(GLuint shaderProgram);
+	//Frame buffers for water reflection/refraction.
+	GLuint reflection_FBO, reflection_texture, reflection_DBO;
+	GLuint refraction_FBO, refraction_texture, refraction_DBO;
 };
 
 #endif
