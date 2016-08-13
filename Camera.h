@@ -46,5 +46,9 @@ public:
 	//Function to switch between first person and third person view.
 	void save();
 	void load();
+	
+	//Misc.
+	void invert(float distance);
+	void revert(float distance);
 };
 #endif

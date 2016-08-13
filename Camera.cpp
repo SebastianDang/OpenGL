@@ -190,3 +190,17 @@ void Camera::load()
 	this->pitch = this->saved_pitch;
 	this->yaw = this->saved_yaw;
 }
+
+/* Alter the camera to render from an inverted position. */
+void Camera::invert(float distance)
+{
+	this->camera.position.y -= distance;
+	this->window_updateCamera();
+}
+
+/* Alter the camera back to render from the normal position. */
+void Camera::revert(float distance)
+{
+	this->camera.position.y += distance;
+	this->window_updateCamera();
+}

@@ -233,7 +233,7 @@ void Water::draw(GLuint shaderProgram)
 	glUniform1i(glGetUniformLocation(shaderProgram, "reflectionTexture"), 0);
 	//Bind the refraction texture.
 	glActiveTexture(GL_TEXTURE1);//Enable the texture.
-	glBindTexture(GL_TEXTURE_2D, this->reflection_texture);
+	glBindTexture(GL_TEXTURE_2D, this->refraction_texture);
 	glUniform1i(glGetUniformLocation(shaderProgram, "refractionTexture"), 1);
 	//Draw the water.
     glDrawElements(GL_TRIANGLES, (GLsizei)this->indices.size(), GL_UNSIGNED_INT, 0);

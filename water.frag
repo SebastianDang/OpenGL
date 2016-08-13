@@ -21,7 +21,6 @@ void main()
 	vec4 refractColor = texture(refractionTexture, refractCoords);
 	
     color = mix(reflectColor, refractColor, 0.8);
-    //color = mix(reflectColor, refractColor, 0.0);
 }
 
     
