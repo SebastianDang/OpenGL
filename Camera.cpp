@@ -17,7 +17,7 @@ using namespace std;
 /* Setup the camera for arbritrary view, not attached to an object. */
 Camera::Camera(glm::vec3 e, glm::vec3 d, glm::vec3 up)
 {
-	setupCamera(e, d, up);
+	this->setupCamera(e, d, up);
 }
 
 /* Setup the camera for 3rd person view. */
@@ -27,25 +27,13 @@ Camera::Camera(OBJObject * object_follow)
 	glm::vec3 object_position = glm::vec3(object_follow->toWorld[3]);//Get the object's current position.
 	glm::vec3 camera_position = glm::vec3(object_position.x, object_position.y, object_position.z + INITIAL_CAMERA_DISTANCE);
 	glm::vec3 camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
-	setupCamera(camera_position, object_position, camera_up);
+	this->setupCamera(camera_position, object_position, camera_up);
 }
 
 /* Deconstructor to safely delete when finished. */
 Camera::~Camera()
 {
 
-}
-
-/* Update the camera variables. */
-void Camera::updateCamera() {
-	this->camera.direction = glm::normalize(camera.position - camera.lookat);
-	this->camera.right = glm::normalize(glm::cross(camera.up, camera.direction));
-}
-
-/* [Window Class] Update the camera, based on the current camera struct. Called whenever we want to switch to this camera. */
-void Camera::window_updateCamera()
-{
-	Window::camera_update_callback(this->camera.position, this->camera.lookat, this->camera.up);
 }
 
 /* Setup camera for the object. */
@@ -62,6 +50,18 @@ void Camera::setupCamera(glm::vec3 e, glm::vec3 d, glm::vec3 up) {
 	this->pitch = INITIAL_PITCH;
 	//Save the current values.
 	this->save();
+}
+
+/* Update the camera variables. */
+void Camera::updateCamera() {
+	this->camera.direction = glm::normalize(camera.position - camera.lookat);
+	this->camera.right = glm::normalize(glm::cross(camera.up, camera.direction));
+}
+
+/* [Window Class] Update the camera, based on the current camera struct. Called whenever we want to switch to this camera. */
+void Camera::window_updateCamera()
+{
+	Window::camera_update_callback(this->camera.position, this->camera.lookat, this->camera.up);
 }
 
 /* Changes the position and lookat to follow an object. */
@@ -178,15 +178,15 @@ void Camera::first_person_movement(glm::vec3 v, glm::vec3 w)
 /* Save the current camera components. */
 void Camera::save()
 {
-	this->saved_camera = camera;
-	this->saved_pitch = pitch;
-	this->saved_yaw = yaw;
+	this->saved_camera = this->camera;
+	this->saved_pitch = this->pitch;
+	this->saved_yaw = this->yaw;
 }
 
 /* Load the last saved camera components. */
 void Camera::load()
 {
-	this->camera = saved_camera;
-	this->pitch = saved_pitch;
-	this->yaw = saved_yaw;
+	this->camera = this->saved_camera;
+	this->pitch = this->saved_pitch;
+	this->yaw = this->saved_yaw;
 }

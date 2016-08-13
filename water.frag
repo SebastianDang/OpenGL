@@ -13,7 +13,6 @@ out vec4 color;
 
 void main()
 {
-
 	vec2 coords = (clipSpace.xy/clipSpace.w)/2.0 + 0.5;
 	vec2 reflectCoords = vec2(coords.x, -coords.y);
 	vec2 refractCoords = vec2(coords.x, coords.y);
@@ -21,8 +20,8 @@ void main()
 	vec4 reflectColor = texture(reflectionTexture, reflectCoords);
 	vec4 refractColor = texture(refractionTexture, refractCoords);
 	
-    //color = mix(reflectColor, refractColor, 0.8);
-    color = mix(reflectColor, refractColor, 0.0);
+    color = mix(reflectColor, refractColor, 0.8);
+    //color = mix(reflectColor, refractColor, 0.0);
 }
 
     

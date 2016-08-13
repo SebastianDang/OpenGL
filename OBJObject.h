@@ -45,6 +45,7 @@ public:
 
 	//Draw.
 	void draw(GLuint shaderProgram);
+	void draw(GLuint shaderProgram, glm::vec4 clip_plane);
 
 	//Object movement.
 	void W_movement(glm::vec2 boundaries);

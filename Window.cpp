@@ -5,7 +5,6 @@
 #include "skybox.h"
 #include "Water.h"
 
-
 using namespace std;
 
 //Set the title of the program. This will remain static.
@@ -55,21 +54,24 @@ GLint shaderProgram;
 GLint shaderProgram_skybox;
 GLint shaderProgram_water;
 
+
+//---------- Functions ----------//
+
 /* Initialize any objects in the scene here. */
 void Window::initialize_objects()
 {
 	test = new OBJObject("../assets/obj/pod.obj", 1);
-	//Create shaders.
 	shaderProgram = LoadShaders("../shader.vert", "../shader.frag");
-
-	world_camera = new Camera(test);
-	world_camera->window_updateCamera();
 
 	skybox = new SkyBox();
 	shaderProgram_skybox = LoadShaders("../skybox.vert", "../skybox.frag");
 
 	water = new Water(0, 0);
 	shaderProgram_water = LoadShaders("../water.vert", "../water.frag");
+
+	//Initialize the camera.
+	world_camera = new Camera(test);
+	world_camera->window_updateCamera();//Sets camera components to the global camera defined here.
 
 }
 
@@ -156,6 +158,8 @@ void Window::display_callback(GLFWwindow* window)
 	//Gets events, including input such as keyboard and mouse or window resizing
 	glfwPollEvents();
 
+	glEnable(GL_CLIP_DISTANCE0);//Enable clipping planes.
+
 	//--------------- WATER CODE ---------------//
 
 	//Render the reflection texture.
@@ -182,8 +186,6 @@ void Window::display_callback(GLFWwindow* window)
 	//Clear the color and depth buffers
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glEnable(GL_CLIP_DISTANCE0);
 
 	Window::drawScene();//Finally, render the entire scene.
 

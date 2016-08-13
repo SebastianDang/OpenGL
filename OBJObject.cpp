@@ -14,7 +14,7 @@ OBJObject::OBJObject(const char *filepath, int material)
 	this->currentDirection = glm::vec3(0.0f, 0.0f, 1.0f);
 	//Initialize World and material.
 	this->toWorld = glm::mat4(1.0f);//Default at the origin.
-	this->toWorld = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 0.0f)) * this->toWorld;
+	this->toWorld = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 5.0f, 0.0f)) * this->toWorld;
 	this->material = material;//Set the material to the passed in material number!
 	//Parse the object @ filepath. Return if failed.
 	if (this->parse(filepath) == -1) return;
