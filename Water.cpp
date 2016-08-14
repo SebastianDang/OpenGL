@@ -6,6 +6,7 @@
 #define VERTEX_COUNT 2
 #define DRAW_SHADED 0
 #define DRAW_WIREFRAME 1
+#define WAVE_SPEED 0.03f
 
 Water::Water(int x_d, int z_d)
 {
@@ -13,6 +14,7 @@ Water::Water(int x_d, int z_d)
 	this->x = x_d * SIZE;
 	this->z = z_d * SIZE;
 	this->draw_mode = DRAW_SHADED;
+	this->wave_factor = 0.0f;
 	//Setup toWorld so that the terrain is at the center of the world.
 	this->toWorld = glm::mat4(1.0f);
 	glm::mat4 translate = glm::translate(glm::mat4(1.0f), glm::vec3(-SIZE/2, 0, -SIZE/2));
@@ -118,6 +120,9 @@ void Water::setupWater()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Container), (GLvoid*)offsetof(Container, texCoord));
 
+	//Textures
+	this->dudv_texture = load_dudv_map("../assets/water/water_dudv_map.ppm", 0);
+
 	//Unbind.
 	glBindBuffer(GL_ARRAY_BUFFER, 0); //Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind.
 	glBindVertexArray(0); //Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO.
@@ -187,6 +192,91 @@ void Water::initializeRefraction()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+/** Load a ppm file from disk.
+@input filename The location of the PPM file.  If the file is not found, an error message
+will be printed and this function will return 0
+@input width This will be modified to contain the width of the loaded image, or 0 if file not found
+@input height This will be modified to contain the height of the loaded image, or 0 if file not found
+@return Returns the RGB pixel data as interleaved unsigned chars (R0 G0 B0 R1 G1 B1 R2 G2 B2 .... etc) or 0 if an error ocured
+**/
+unsigned char * Water::loadPPM(const char* filename, int& width, int& height)
+{
+	const int BUFSIZE = 128;
+	FILE* fp;
+	unsigned int read;
+	unsigned char* rawData;
+	char buf[3][BUFSIZE];
+	char* retval_fgets;
+	size_t retval_sscanf;
+	//Read in the ppm file.
+	if ((fp = fopen(filename, "rb")) == NULL)
+	{
+		std::cerr << "error reading ppm file, could not locate " << filename << std::endl;
+		width = 0;
+		height = 0;
+		return NULL;
+	}
+	//Read magic number:
+	retval_fgets = fgets(buf[0], BUFSIZE, fp);
+	//Read width and height:
+	do
+	{
+		retval_fgets = fgets(buf[0], BUFSIZE, fp);
+	} while (buf[0][0] == '#');
+	retval_sscanf = sscanf(buf[0], "%s %s", buf[1], buf[2]);
+	width = atoi(buf[1]);
+	height = atoi(buf[2]);
+	//Read maxval:
+	do
+	{
+		retval_fgets = fgets(buf[0], BUFSIZE, fp);
+	} while (buf[0][0] == '#');
+	//Read image data:
+	rawData = new unsigned char[width * height * 3];
+	read = (unsigned int)fread(rawData, width * height * 3, 1, fp);
+	fclose(fp);
+	if (read != 1)
+	{
+		std::cerr << "error parsing ppm file, incomplete data" << std::endl;
+		delete[] rawData;
+		width = 0;
+		height = 0;
+		return NULL;
+	}
+	return rawData;//Return rawData or 0 if failed.
+}
+
+/* Load the dudv map through the read image file. */
+GLuint Water::load_dudv_map(const char* filename, int index)
+{
+	//Hold the textureID (This will be the textureID to return).
+	GLuint textureID;
+	//Define variables to hold height map's width, height, pixel information.
+	int width, height;
+	unsigned char * image;
+	//Create ID for texture.
+	glGenTextures(1, &textureID);
+	//Set the active texture ID.
+	glActiveTexture(GL_TEXTURE0);
+	//Set this texture to be the one we are working with.
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	//Generate the texture.
+	image = loadPPM(filename, width, height);//Load the ppm file.
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	//Make sure no bytes are padded:
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	//Use bilinear interpolation:
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//Use clamp to edge:
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);//X
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);//Y
+	//Unbind the texture cube map.
+	glBindTexture(GL_TEXTURE_2D, 0);
+	//Return the textureID, we need to keep track of this texture variable.
+	return textureID;
+}
+
 /* Toggle the draw mode to draw the mesh as lines (wireframe) or as triangle faces. */
 void Water::toggleDrawMode()
 {
@@ -225,6 +315,11 @@ void Water::draw(GLuint shaderProgram)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
+	//Change the wave factor.
+	this->wave_factor += WAVE_SPEED * Window::delta;
+	this->wave_factor = (float)std::fmod(wave_factor, 1.0);
+	printf("%f\n", wave_factor);
+	glUniform1f(glGetUniformLocation(shaderProgram, "waveFactor"), this->wave_factor);
     //Bind for drawing.
     glBindVertexArray(VAO);
 	//Bind the reflection texture.
@@ -235,6 +330,10 @@ void Water::draw(GLuint shaderProgram)
 	glActiveTexture(GL_TEXTURE1);//Enable the texture.
 	glBindTexture(GL_TEXTURE_2D, this->refraction_texture);
 	glUniform1i(glGetUniformLocation(shaderProgram, "refractionTexture"), 1);
+	//Bind the dudv map texture.
+	glActiveTexture(GL_TEXTURE2);//Enable the texture.
+	glBindTexture(GL_TEXTURE_2D, this->dudv_texture);
+	glUniform1i(glGetUniformLocation(shaderProgram, "dudvTexture"), 2);
 	//Draw the water.
     glDrawElements(GL_TRIANGLES, (GLsizei)this->indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);

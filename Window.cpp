@@ -167,7 +167,7 @@ void Window::display_callback(GLFWwindow* window)
 	//Clear the color and depth buffers
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//Render the scene.
+	//Render the scene (For reflection, we invert the pitch first).
 	float camera_distance = 2 * Window::camera_pos.y;
 	world_camera->invert(camera_distance);
 	Window::drawScene();//Draw the scene once.

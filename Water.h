@@ -37,6 +37,11 @@ private:
 	void initializeReflection();
 	void initializeRefraction();
 	//Misc.
+	unsigned char * loadPPM(const char* filename, int& width, int& height);
+	GLuint load_dudv_map(const char* filename, int index);
+	GLuint dudv_texture;
+	float wave_factor;
+	void initializeDUDVmap();
 	int draw_mode;
 
 public:
