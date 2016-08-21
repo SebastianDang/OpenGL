@@ -21,7 +21,7 @@ out vec2 FragTexCoords;
 
 void main()
 {
-	clipSpace = MVP * vec4(vertex.x, 0.0, vertex.z, 1.0);
+	clipSpace = MVP * vec4(vertex.x, vertex.y, vertex.z, 1.0);
     gl_Position = clipSpace;
 
 	FragPos = vec3(model * vec4(vertex.x, vertex.y, vertex.z, 1.0));

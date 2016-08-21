@@ -317,8 +317,8 @@ void Water::draw(GLuint shaderProgram)
 	}
 	//Change the wave factor.
 	this->wave_factor += WAVE_SPEED * Window::delta;
-	this->wave_factor = (float)std::fmod(wave_factor, 1.0);
-	printf("%f\n", wave_factor);
+	//this->wave_factor = (float)std::fmod(wave_factor, 0.2);
+	//printf("%f\n", wave_factor);//DEBUG
 	glUniform1f(glGetUniformLocation(shaderProgram, "waveFactor"), this->wave_factor);
     //Bind for drawing.
     glBindVertexArray(VAO);
