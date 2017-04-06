@@ -53,6 +53,7 @@ public:
 	static void idle_callback();
 	static void display_callback(GLFWwindow*);
 	static void drawScene();
+    static void drawEnvironment();
 	static void frame_time_callback();
 
 	//Keyboard and mouse callback functions

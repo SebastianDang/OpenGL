@@ -120,11 +120,17 @@ void Water::setupWater()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Container), (GLvoid*)offsetof(Container, texCoord));
 
-	//Textures
-	this->dudv_texture = load_dudv_map("../assets/water/water_dudv_map.ppm", 0);
 
-	//Unbind.
-	glBindBuffer(GL_ARRAY_BUFFER, 0); //Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind.
+    //------------------------------ Windows (both 32 and 64 bit versions) ------------------------------ //
+#ifdef _WIN32
+    this->dudv_texture = load_dudv_map("../assets/water/water_dudv_map.ppm", 0);//Texture
+    //----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
+#else
+    this->dudv_texture = load_dudv_map("./assets/water/water_dudv_map.ppm", 0);//Texture
+#endif
+    
+    //Unbind.
+    glBindBuffer(GL_ARRAY_BUFFER, 0); //Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind.
 	glBindVertexArray(0); //Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO.
 }
 

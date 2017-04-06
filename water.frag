@@ -20,6 +20,11 @@ out vec4 color;
 
 void main()
 {
+    //----- Default to reduce warnings. -----//
+    vec3 position = FragPos;
+    vec3 normal = FragNormal;
+    //----- -----//
+    
 	vec2 coords = (clipSpace.xy/clipSpace.w)/2.0 + 0.5;
 	vec2 reflectCoords = vec2(coords.x, -coords.y);
 	vec2 refractCoords = vec2(coords.x, coords.y);

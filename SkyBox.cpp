@@ -91,12 +91,12 @@ void SkyBox::setupFaces()
 
 	//----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
 	#else
-	this->faces.push_back("./skybox/right.ppm");//Right.
-	this->faces.push_back("./skybox/left.ppm");//Left.
-	this->faces.push_back("./skybox/top.ppm");//Top.
-	this->faces.push_back("./skybox/bottom.ppm");//Bottom.
-	this->faces.push_back("./skybox/back.ppm");//Back.
-	this->faces.push_back("./skybox/front.ppm");//Front.
+	this->faces.push_back("./assets/skybox/right.ppm");//Right.
+	this->faces.push_back("./assets/skybox/left.ppm");//Left.
+	this->faces.push_back("./assets/skybox/top.ppm");//Top.
+	this->faces.push_back("./assets/skybox/bottom.ppm");//Bottom.
+	this->faces.push_back("./assets/skybox/back.ppm");//Back.
+	this->faces.push_back("./assets/skybox/front.ppm");//Front.
 	#endif
 }
 

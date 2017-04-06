@@ -60,16 +60,30 @@ GLint shaderProgram_water;
 /* Initialize any objects in the scene here. */
 void Window::initialize_objects()
 {
-	test = new OBJObject("../assets/obj/pod.obj", 1);
-	shaderProgram = LoadShaders("../shader.vert", "../shader.frag");
-
-	skybox = new SkyBox();
-	shaderProgram_skybox = LoadShaders("../skybox.vert", "../skybox.frag");
-
-	water = new Water(0, 0);
-	shaderProgram_water = LoadShaders("../water.vert", "../water.frag");
-
-	//Initialize the camera.
+    //------------------------------ Windows (both 32 and 64 bit versions) ------------------------------ //
+#ifdef _WIN32
+    test = new OBJObject("../assets/obj/pod.obj", 1);
+    shaderProgram = LoadShaders("../shader.vert", "../shader.frag");
+    
+    skybox = new SkyBox();
+    shaderProgram_skybox = LoadShaders("../skybox.vert", "../skybox.frag");
+    
+    water = new Water(0, 0);
+    shaderProgram_water = LoadShaders("../water.vert", "../water.frag");
+    
+    //----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
+#else
+    test = new OBJObject("./assets/obj/pod.obj", 1);
+    shaderProgram = LoadShaders("./shader.vert", "./shader.frag");
+    
+    skybox = new SkyBox();
+    shaderProgram_skybox = LoadShaders("./skybox.vert", "./skybox.frag");
+    
+    water = new Water(0, 0);
+    shaderProgram_water = LoadShaders("./water.vert", "./water.frag");
+#endif
+    
+    //Initialize the camera.
 	world_camera = new Camera(test);
 	world_camera->window_updateCamera();//Sets camera components to the global camera defined here.
 
@@ -94,6 +108,15 @@ GLFWwindow* Window::create_window(int width, int height)
 
 	//4x antialiasing
 	glfwWindowHint(GLFW_SAMPLES, 4);
+    
+#ifdef __APPLE__
+    // Ensure that minimum OpenGL version is 3.3
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    // Enable forward compatibility and allow a modern OpenGL context
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
 	//Create the GLFW window
 	GLFWwindow* window = glfwCreateWindow(width, height, window_title, NULL, NULL);
@@ -157,6 +180,7 @@ void Window::display_callback(GLFWwindow* window)
 {
 	//Gets events, including input such as keyboard and mouse or window resizing
 	glfwPollEvents();
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glEnable(GL_CLIP_DISTANCE0);//Enable clipping planes.
 
@@ -170,7 +194,7 @@ void Window::display_callback(GLFWwindow* window)
 	//Render the scene (For reflection, we invert the pitch first).
 	float camera_distance = 2 * Window::camera_pos.y;
 	world_camera->invert(camera_distance);
-	Window::drawScene();//Draw the scene once.
+	Window::drawEnvironment();//Draw the scene once.
 	world_camera->revert(camera_distance);
 
 	//Render the refraction texture.
@@ -179,7 +203,7 @@ void Window::display_callback(GLFWwindow* window)
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Render the scene.
-	Window::drawScene();//Draw the scene twice.
+	Window::drawEnvironment();//Draw the scene twice.
 
 	//--------------- END WATER CODE ---------------//
 
@@ -195,10 +219,10 @@ void Window::display_callback(GLFWwindow* window)
 	//Draw the water.
 	glUseProgram(shaderProgram_water);
 	water->draw(shaderProgram_water);
-	
+
 	//Swap buffers
 	glfwSwapBuffers(window);
-	//glFinish();
+	glFinish();
 }
 
 /* Perform any draw methods here. We handle this separately to avoid changing the swap buffer in display_callback. */
@@ -210,8 +234,16 @@ void Window::drawScene()
 	test->draw(shaderProgram);
 	//Use the shader of programID
 	glUseProgram(shaderProgram_skybox);
-	//Render the objects
+	//Render the skybox
 	skybox->draw(shaderProgram_skybox);
+}
+
+void Window::drawEnvironment()
+{
+    //Use the shader of programID
+    glUseProgram(shaderProgram_skybox);
+    //Render the skybox
+    skybox->draw(shaderProgram_skybox);
 }
 
 /* Perform updates to the frame time for any animations. */
@@ -228,8 +260,8 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 {
 	//---------- Any global key definitions for holds and releases ----------//
 	//Define shift keys for capital letters.
-	int Lshift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
-	int Rshift = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
+//	int Lshift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+//	int Rshift = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
 	//Define movement keys.
 	int wKey = glfwGetKey(window, GLFW_KEY_W);
 	int aKey = glfwGetKey(window, GLFW_KEY_A);

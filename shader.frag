@@ -60,7 +60,10 @@ vec3 CalcSpotLight(SpotLight spotLight, vec3 norm, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
-
+    //----- Default to reduce warnings. -----//
+    vec2 default_texCoords = FragTexCoords;
+    //----- -----//
+    
 	vec3 result = vec3(0.0f, 0.0f, 0.0f);//Set to black in case all lights are off.
 
 	//Light computation for the fragment shader. [DISABLED]
