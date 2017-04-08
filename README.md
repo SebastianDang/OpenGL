@@ -1,1 +1,1 @@
-# Dang-Sebastian
+This application replicates water using Frame Buffer Objects for both reflection and refraction. It also integrates clipping planes to avoid rendering objects under the plane to the reflection FBO. DU/DV maps are added to create a wavy effect. There's also environment mapping using the skybox. Currently, I'm working on making this more realistic to mimic the basic properties of water.
