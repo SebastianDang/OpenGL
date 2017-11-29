@@ -1,8 +1,8 @@
-#include "window.h"
-#include "group.h"
+#include "stdafx.h"
+#include "Window.h"
 #include "OBJObject.h"
 #include "Camera.h"
-#include "skybox.h"
+#include "Skybox.h"
 #include "Water.h"
 
 using namespace std;
@@ -60,33 +60,32 @@ GLint shaderProgram_water;
 /* Initialize any objects in the scene here. */
 void Window::initialize_objects()
 {
-    //------------------------------ Windows (both 32 and 64 bit versions) ------------------------------ //
+	//------------------------------ Windows (both 32 and 64 bit versions) ------------------------------ //
 #ifdef _WIN32
-    test = new OBJObject("../assets/obj/pod.obj", 1);
-    shaderProgram = LoadShaders("../shader.vert", "../shader.frag");
-    
-    skybox = new SkyBox();
-    shaderProgram_skybox = LoadShaders("../skybox.vert", "../skybox.frag");
-    
-    water = new Water(0, 0);
-    shaderProgram_water = LoadShaders("../water.vert", "../water.frag");
-    
-    //----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
+	test = new OBJObject("assets/obj/pod.obj", 1);
+	shaderProgram = LoadShaders("shader.vert", "shader.frag");
+
+	skybox = new SkyBox();
+	shaderProgram_skybox = LoadShaders("skybox.vert", "skybox.frag");
+
+	water = new Water(0, 0);
+	shaderProgram_water = LoadShaders("water.vert", "water.frag");
+
+	//----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
 #else
-    test = new OBJObject("./assets/obj/pod.obj", 1);
-    shaderProgram = LoadShaders("./shader.vert", "./shader.frag");
-    
-    skybox = new SkyBox();
-    shaderProgram_skybox = LoadShaders("./skybox.vert", "./skybox.frag");
-    
-    water = new Water(0, 0);
-    shaderProgram_water = LoadShaders("./water.vert", "./water.frag");
+	test = new OBJObject("./assets/obj/pod.obj", 1);
+	shaderProgram = LoadShaders("./shader.vert", "./shader.frag");
+
+	skybox = new SkyBox();
+	shaderProgram_skybox = LoadShaders("./skybox.vert", "./skybox.frag");
+
+	water = new Water(0, 0);
+	shaderProgram_water = LoadShaders("./water.vert", "./water.frag");
 #endif
-    
-    //Initialize the camera.
+
+	//Initialize the camera.
 	world_camera = new Camera(test);
 	world_camera->window_updateCamera();//Sets camera components to the global camera defined here.
-
 }
 
 /* Deconstructor, deletes all initialized objects for a proper cleanup. */
@@ -108,14 +107,14 @@ GLFWwindow* Window::create_window(int width, int height)
 
 	//4x antialiasing
 	glfwWindowHint(GLFW_SAMPLES, 4);
-    
+
 #ifdef __APPLE__
-    // Ensure that minimum OpenGL version is 3.3
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    // Enable forward compatibility and allow a modern OpenGL context
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	// Ensure that minimum OpenGL version is 3.3
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	// Enable forward compatibility and allow a modern OpenGL context
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
 	//Create the GLFW window
@@ -175,12 +174,21 @@ void Window::idle_callback()
 	//Perform an animations here.
 }
 
+/* Perform updates to the frame time for any animations. */
+void Window::frame_time_callback()
+{
+	//Calculate the frame time.
+	float currentFrameTime = (float)glfwGetTime();//Get the current time.
+	Window::delta = (currentFrameTime - Window::lastFrameTime);//Calculate the change from this frame time, to the old frame time.
+	Window::lastFrameTime = currentFrameTime;//Record the (new per calculation) old frame time.
+}
+
 /* Display callback function. Whenever contents need to be redisplayed, this will be called. We render, or redraw any part of the scene here. */
 void Window::display_callback(GLFWwindow* window)
 {
 	//Gets events, including input such as keyboard and mouse or window resizing
 	glfwPollEvents();
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	glEnable(GL_CLIP_DISTANCE0);//Enable clipping planes.
 
@@ -240,19 +248,10 @@ void Window::drawScene()
 
 void Window::drawEnvironment()
 {
-    //Use the shader of programID
-    glUseProgram(shaderProgram_skybox);
-    //Render the skybox
-    skybox->draw(shaderProgram_skybox);
-}
-
-/* Perform updates to the frame time for any animations. */
-void Window::frame_time_callback()
-{
-	//Calculate the frame time.
-	float currentFrameTime = (float)glfwGetTime();//Get the current time.
-	Window::delta = (currentFrameTime - Window::lastFrameTime);//Calculate the change from this frame time, to the old frame time.
-	Window::lastFrameTime = currentFrameTime;//Record the (new per calculation) old frame time.
+	//Use the shader of programID
+	glUseProgram(shaderProgram_skybox);
+	//Render the skybox
+	skybox->draw(shaderProgram_skybox);
 }
 
 /* Handle Key input. */
@@ -328,12 +327,13 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 	//On right drag, we perform translations. Relative to the object.
 	if (Window::mouse_status == RIGHT_HOLD)
 	{
-
+		world_camera->first_person_movement(Window::lastPoint, Window::curPoint);
+		world_camera->window_updateCamera();
 	}
 }
 
 /* Handle mouse button input. This handles the status if left button or right button was clicked and held. */
-void Window::cursor_button_callback(GLFWwindow* window, int button, int action, int mods) 
+void Window::cursor_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	//Define left and right clicks.
 	int left_click = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "Camera.h"
 #include "OBJObject.h"
 
@@ -8,7 +9,7 @@ using namespace std;
 #define MIN_CAMERA_PITCH_Y 0.0f//Y position at the bottom. Can't go below this.
 #define ZOOM_MIN_DISTANCE 2.0f//Minimum zoom distance.
 #define ZOOM_MAX_DISTANCE 40.0f//Maximum zoom distance.
-#define MOUSE_SENSITIVITY 0.001f//Mouse sensivity for FPS style camera.
+#define MOUSE_SENSITIVITY 0.01f//Mouse sensivity for FPS style camera.
 #define INITIAL_YAW -90.0f
 #define INITIAL_PITCH 0.0f
 #define MAX_PITCH 89.0f

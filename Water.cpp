@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 #include <stdio.h>
 #include "Water.h"
 
@@ -123,7 +123,7 @@ void Water::setupWater()
 
     //------------------------------ Windows (both 32 and 64 bit versions) ------------------------------ //
 #ifdef _WIN32
-    this->dudv_texture = load_dudv_map("../assets/water/water_dudv_map.ppm", 0);//Texture
+    this->dudv_texture = load_dudv_map("assets/water/water_dudv_map.ppm", 0);//Texture
     //----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
 #else
     this->dudv_texture = load_dudv_map("./assets/water/water_dudv_map.ppm", 0);//Texture

@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "OBJObject.h"
 #include "Window.h"
 #include <math.h>

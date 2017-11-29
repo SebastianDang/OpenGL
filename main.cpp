@@ -1,12 +1,30 @@
-#include "main.h"
+#include "stdafx.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "window.h"
 
-GLFWwindow* window;
+GLFWwindow* window; // Reference main window
+
+/* Print the version of openGL and GLSL. */
+void print_versions()
+{
+	// Get info of GPU and supported OpenGL version
+	printf("Renderer: %s\n", glGetString(GL_RENDERER));
+	printf("OpenGL version supported %s\n", glGetString(GL_VERSION));
+
+	//If the shading language symbol is defined
+	#ifdef GL_SHADING_LANGUAGE_VERSION
+	std::printf("Supported GLSL version is %s.\n", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
+	#endif
+}
 
 /* Error callback to write error to the console. */
 void error_callback(int error, const char* description)
 {
 	// Print error
-	fputs(description, stderr);
+	fputs(description + error, stderr);
 }
 
 /* Setup callback to handle openGL setup. */
@@ -38,7 +56,7 @@ void setup_glew()
 	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
 }
 
-/* Setup openGL settings. */
+/* Setup OpenGL settings. */
 void setup_opengl_settings()
 {
 	// Setup GLEW
@@ -58,22 +76,11 @@ void setup_opengl_settings()
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 }
 
-/* Print the version of openGL and GLSL. */
-void print_versions()
-{
-	// Get info of GPU and supported OpenGL version
-	printf("Renderer: %s\n", glGetString(GL_RENDERER));
-	printf("OpenGL version supported %s\n", glGetString(GL_VERSION));
-
-	//If the shading language symbol is defined
-	#ifdef GL_SHADING_LANGUAGE_VERSION
-	std::printf("Supported GLSL version is %s.\n", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
-	#endif
-}
-
+// Main function
 int main(void)
 {
 	//---------- OpenGL ----------//
+
 	// Create the GLFW window
 	window = Window::create_window(800, 600);
 	// Print OpenGL and GLSL versions
@@ -83,9 +90,10 @@ int main(void)
 	// Setup OpenGL settings, including lighting, materials, etc.
 	setup_opengl_settings();
 	// Initialize objects/pointers for rendering
-	Window::initialize_objects();
+	Window::initialize_objects(); // This is a call in window which intiializes everything else.
 
 	//---------- Window display ----------//
+
 	// Loop while GLFW window should stay open
 	while (!glfwWindowShouldClose(window))
 	{

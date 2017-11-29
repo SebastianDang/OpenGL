@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="OBJObject.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="Water.cpp" />
+    <ClCompile Include="Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="OBJObject.h" />
+    <ClInclude Include="shader.h" />
+    <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="Water.h" />
+    <ClInclude Include="Window.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Definitions.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="shader.frag" />
+    <None Include="shader.vert" />
+    <None Include="skybox.frag" />
+    <None Include="skybox.vert" />
+    <None Include="water.frag" />
+    <None Include="water.vert" />
+  </ItemGroup>
+</Project>

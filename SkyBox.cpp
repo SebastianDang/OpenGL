@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "SkyBox.h"
 #include "Window.h"
 
@@ -82,12 +83,12 @@ void SkyBox::setupFaces()
 {
 	//------------------------------ Windows (both 32 and 64 bit versions) ------------------------------ //
 	#ifdef _WIN32 
-	this->faces.push_back("../skybox/right.ppm");//Right.
-	this->faces.push_back("../skybox/left.ppm");//Left.
-	this->faces.push_back("../skybox/top.ppm");//Top.
-	this->faces.push_back("../skybox/bottom.ppm");//Bottom.
-	this->faces.push_back("../skybox/back.ppm");//Back.
-	this->faces.push_back("../skybox/front.ppm");//Front.
+	this->faces.push_back("skybox/right.ppm");//Right.
+	this->faces.push_back("skybox/left.ppm");//Left.
+	this->faces.push_back("skybox/top.ppm");//Top.
+	this->faces.push_back("skybox/bottom.ppm");//Bottom.
+	this->faces.push_back("skybox/back.ppm");//Back.
+	this->faces.push_back("skybox/front.ppm");//Front.
 
 	//----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
 	#else
