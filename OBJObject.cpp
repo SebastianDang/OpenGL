@@ -1,5 +1,4 @@
 #include "stdafx.h"
-
 #include "OBJObject.h"
 #include "Window.h"
 #include <math.h>
@@ -13,11 +12,14 @@ using namespace std;
 OBJObject::OBJObject(const char *filepath, int material) 
 {
 	//Initialize object components.
-	this->currentDirection = glm::vec3(0.0f, 0.0f, 1.0f);
+	this->currentDirection = glm::vec3(0.0f, 0.0f, 1.0f); // Sets the direction to be in the z-direction.
+	currentRunSpeed = RUN_SPEED;
+	currentTurnSpeed = TURN_SPEED;
+
 	//Initialize World and material.
 	this->toWorld = glm::mat4(1.0f);//Default at the origin.
-	this->toWorld = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 3.0f, 0.0f)) * this->toWorld;
 	this->material = material;//Set the material to the passed in material number!
+
 	//Parse the object @ filepath. Return if failed.
 	if (this->parse(filepath) == -1) return;
 	//Setup the object.
@@ -116,14 +118,14 @@ int OBJObject::parse(const char *filepath)
 		Container container;
 		container.vertex = vertices[i];
 		container.normal = normals[i];
-		container.texCoord = glm::vec2(0.0f, 0.0f);
+		container.texCoord = glm::vec2(0.0f, 0.0f); // Leaving this empty for now to load simple objs.
 		containers.push_back(container);
 	}
 	//Return 0 if successful.
 	return 0;
 }
 
-/* Setup the object for modern openGL rendering. */
+/* Setup the object for modern openGL rendering. This only works and will run if the obj file was correctly parsed. */
 void OBJObject::setupObject()
 {
 	//Create buffers/arrays.
@@ -209,7 +211,7 @@ void OBJObject::updateMaterial(GLuint shaderProgram)
 }
 
 /* Render the object in modern openGL using a shader program. */
-void OBJObject::draw(GLuint shaderProgram)
+void OBJObject::draw(GLuint shaderProgram, glm::vec4 ClipPlane)
 {
 	//Calculate combination of the model (toWorld), view (camera inverse), and perspective matrices. Send to shader.
 	glm::mat4 MVP = Window::P * Window::V * toWorld;
@@ -224,6 +226,8 @@ void OBJObject::draw(GLuint shaderProgram)
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "projection"), 1, GL_FALSE, &projection[0][0]);
 	//Update the viewPosition.
 	glUniform3f(glGetUniformLocation(shaderProgram, "viewPos"), Window::camera_pos.x, Window::camera_pos.y, Window::camera_pos.z);
+	//Update the clipping plane if needed.
+	glUniform4f(glGetUniformLocation(shaderProgram, "clipPlane"), ClipPlane.x, ClipPlane.y, ClipPlane.z, ClipPlane.w);
 	//Update the material.
 	updateMaterial(shaderProgram);
 	//Bind for rendering.
@@ -232,10 +236,24 @@ void OBJObject::draw(GLuint shaderProgram)
 	glBindVertexArray(0);
 }
 
+/* Apply a translation to the current toWorld matrix. */
+void OBJObject::translate(glm::vec3 translation)
+{
+	this->toWorld = glm::translate(glm::mat4(1.0f), translation) * this->toWorld;
+}
+
+/* Apply a rotation to the current toWorld matrix. */
+void OBJObject::rotate(float degree, glm::vec3 axis)
+{
+	this->toWorld = glm::rotate(glm::mat4(1.0f), (degree / 180.0f * glm::pi<float>()), axis) * this->toWorld;
+}
+
+// Player movement for the object, which keeps track of the current direction. 
+// These are handled differently to maintain a level of bounds.
 void OBJObject::W_movement(glm::vec2 boundaries)
 {
 	glm::vec3 current_position = glm::vec3(this->toWorld[3]);
-	glm::vec3 displacement = this->currentDirection * (RUN_SPEED * Window::delta);
+	glm::vec3 displacement = this->currentDirection * (currentRunSpeed * Window::delta);
 	glm::vec3 new_position = current_position + displacement;
 	//Check the boundaries.
 	if (new_position.x > boundaries.x || new_position.z > boundaries.y || new_position.x < 0 || new_position.z < 0)
@@ -247,7 +265,7 @@ void OBJObject::W_movement(glm::vec2 boundaries)
 
 void OBJObject::A_movement(glm::vec2 boundaries)
 {
-	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), ((TURN_SPEED * Window::delta) / 180.0f * glm::pi<float>()), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), ((currentTurnSpeed * Window::delta) / 180.0f * glm::pi<float>()), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::vec4 current_direction = glm::vec4(this->currentDirection, 1.0f);
 	current_direction = rotate * current_direction;
 	glm::vec3 new_direction = glm::vec3(current_direction);
@@ -258,7 +276,7 @@ void OBJObject::A_movement(glm::vec2 boundaries)
 void OBJObject::S_movement(glm::vec2 boundaries)
 {
 	glm::vec3 current_position = glm::vec3(this->toWorld[3]);
-	glm::vec3 displacement = this->currentDirection * (RUN_SPEED * Window::delta);
+	glm::vec3 displacement = this->currentDirection * (currentRunSpeed * Window::delta);
 	glm::vec3 new_position = current_position - displacement;
 	//Check the boundaries.
 	if (new_position.x > boundaries.x || new_position.z > boundaries.y || new_position.x < 0 || new_position.z < 0)
@@ -270,7 +288,7 @@ void OBJObject::S_movement(glm::vec2 boundaries)
 
 void OBJObject::D_movement(glm::vec2 boundaries)
 {
-	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), ((-TURN_SPEED * Window::delta) / 180.0f * glm::pi<float>()), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 rotate = glm::rotate(glm::mat4(1.0f), ((-currentTurnSpeed * Window::delta) / 180.0f * glm::pi<float>()), glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::vec4 current_direction = glm::vec4(this->currentDirection, 1.0f);
 	current_direction = rotate * current_direction;
 	glm::vec3 new_direction = glm::vec3(current_direction);

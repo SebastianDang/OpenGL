@@ -109,6 +109,6 @@ int main(void)
 	glfwDestroyWindow(window);
 	// Terminate GLFW
 	glfwTerminate();
-
+	// Proper exit
 	exit(EXIT_SUCCESS);
 }

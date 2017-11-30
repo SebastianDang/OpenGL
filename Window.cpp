@@ -43,7 +43,7 @@ float Window::delta;//The time since the last frame time, from the current frame
 Camera * world_camera;
 
 //Define any objects here.
-OBJObject * test;
+OBJObject * testObj;
 
 //Define any environment variables here. We should always have the skybox!
 SkyBox * skybox;
@@ -62,7 +62,7 @@ void Window::initialize_objects()
 {
 	//------------------------------ Windows (both 32 and 64 bit versions) ------------------------------ //
 #ifdef _WIN32
-	test = new OBJObject("assets/obj/pod.obj", 1);
+	testObj = new OBJObject("assets/obj/pod.obj", 1);
 	shaderProgram = LoadShaders("shader.vert", "shader.frag");
 
 	skybox = new SkyBox();
@@ -73,7 +73,7 @@ void Window::initialize_objects()
 
 	//----------------------------------- Not Windows (MAC OSX) ---------------------------------------- //
 #else
-	test = new OBJObject("./assets/obj/pod.obj", 1);
+	testObj = new OBJObject("./assets/obj/pod.obj", 1);
 	shaderProgram = LoadShaders("./shader.vert", "./shader.frag");
 
 	skybox = new SkyBox();
@@ -84,8 +84,11 @@ void Window::initialize_objects()
 #endif
 
 	//Initialize the camera.
-	world_camera = new Camera(test);
+	world_camera = new Camera(testObj);
 	world_camera->window_updateCamera();//Sets camera components to the global camera defined here.
+
+	//Fix some other objects in the scene.
+	testObj->translate(glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 /* Deconstructor, deletes all initialized objects for a proper cleanup. */
@@ -199,10 +202,13 @@ void Window::display_callback(GLFWwindow* window)
 	//Clear the color and depth buffers
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	glm::vec4 plane = glm::vec4(0.0f, -1.0f, 0.0f, water->getHeight());
+
 	//Render the scene (For reflection, we invert the pitch first).
 	float camera_distance = 2 * Window::camera_pos.y;
 	world_camera->invert(camera_distance);
-	Window::drawEnvironment();//Draw the scene once.
+	Window::drawEnvironment(-plane);//Draw the scene once.
 	world_camera->revert(camera_distance);
 
 	//Render the refraction texture.
@@ -211,7 +217,7 @@ void Window::display_callback(GLFWwindow* window)
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Render the scene.
-	Window::drawEnvironment();//Draw the scene twice.
+	Window::drawEnvironment(plane);//Draw the scene twice.
 
 	//--------------- END WATER CODE ---------------//
 
@@ -239,15 +245,20 @@ void Window::drawScene()
 	//Use the shader of programID
 	glUseProgram(shaderProgram);
 	//Render the objects
-	test->draw(shaderProgram);
+	testObj->draw(shaderProgram);
 	//Use the shader of programID
 	glUseProgram(shaderProgram_skybox);
 	//Render the skybox
 	skybox->draw(shaderProgram_skybox);
 }
 
-void Window::drawEnvironment()
+/* Draw the environment for the water here. We will render anything that needs to go into the frame buffer. */
+void Window::drawEnvironment(glm::vec4 clipPlane)
 {
+	//Use the shader of programID
+	glUseProgram(shaderProgram);
+	//Render the objects
+	testObj->draw(shaderProgram, clipPlane);
 	//Use the shader of programID
 	glUseProgram(shaderProgram_skybox);
 	//Render the skybox

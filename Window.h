@@ -54,7 +54,7 @@ public:
 	static void frame_time_callback();
 	static void display_callback(GLFWwindow*);
 	static void drawScene();
-    static void drawEnvironment();
+	static void drawEnvironment(glm::vec4 clipPlane = glm::vec4(0.0f));
 
 	//Keyboard and mouse callback functions
 	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -64,7 +64,6 @@ public:
 
 	//Camera update function
 	static void camera_update_callback(glm::vec3 e, glm::vec3 d, glm::vec3 up);
-
 };
 
 #endif

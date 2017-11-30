@@ -41,7 +41,6 @@ private:
 	GLuint load_dudv_map(const char* filename, int index);
 	GLuint dudv_texture;
 	float wave_factor;
-	void initializeDUDVmap();
 	int draw_mode;
 
 public:
@@ -51,6 +50,7 @@ public:
 	//Determine the Water's position in the world.
 	int x, z;
 	glm::mat4 toWorld;
+	float getHeight() { return toWorld[3].y; }
 	//Draw and update methods.
 	void toggleDrawMode();
 	void draw(GLuint shaderProgram);
