@@ -224,22 +224,22 @@ void Object::LoadDataIntoBuffers()
 	glBindVertexArray(m_VAO); //Bind vertex array object.
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO); //Bind Container buffer.
-	glBufferData(GL_ARRAY_BUFFER, m_Data.size() * sizeof(m_Data), &m_Data[0], GL_STATIC_DRAW); // Set vertex buffer to the Container.
+	glBufferData(GL_ARRAY_BUFFER, m_Data.size() * sizeof(S_Container), &m_Data[0], GL_STATIC_DRAW); // Set vertex buffer to the Container.
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO); //Bind indices buffer.
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(int), &m_Indices[0], GL_STATIC_DRAW);
 
 	// Vertex Positions.
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(m_Data), (GLvoid*)offsetof(S_Container, m_Vertex));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(S_Container), (GLvoid*)offsetof(S_Container, m_Vertex));
 
 	// Vertex Normals.
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(m_Data), (GLvoid*)offsetof(S_Container, m_Normal));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(S_Container), (GLvoid*)offsetof(S_Container, m_Normal));
 
 	// Vertex Texture Coords.
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(m_Data), (GLvoid*)offsetof(S_Container, m_TexCoord));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(S_Container), (GLvoid*)offsetof(S_Container, m_TexCoord));
 
 	// Unbind.
 	glBindBuffer(GL_ARRAY_BUFFER, 0); //Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind.
