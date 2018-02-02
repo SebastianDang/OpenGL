@@ -1,26 +1,72 @@
 #pragma once
 
-#include "Window.h"
-#include "Definitions.h"
-
 #ifndef LIGHT_H
 #define LIGHT_H
-class Light {
-private:
 
-	DirLight dirLight;
-	PointLight pointLight;
-	SpotLight spotLight;
+#include "Shader.h"
 
-	void setupLighting();
-	void updateSelectLighting();
+class Light
+{
+protected:
+	bool m_Enabled;
+	glm::vec3 m_Position;
+	glm::vec3 m_Ambient;
+	glm::vec3 m_Diffuse;
+	glm::vec3 m_Specular;
 
 public:
-	Light();
-	~Light();
+	SETGET(bool, Enabled);
+	SETGET(glm::vec3, Position);
+	SETGET(glm::vec3, Ambient);
+	SETGET(glm::vec3, Diffuse);
+	SETGET(glm::vec3, Specular);
 
-	int light_selection;
-
-	void updateLighting(GLuint shaderProgram);
+	virtual void UpdateShader(Shader *pShaderProgram) = 0;
 };
+
+class DirectionalLight : public Light
+{
+private:
+	glm::vec3 m_Direction;
+
+public:
+	DirectionalLight() {}
+
+	SETGET(glm::vec3, Direction);
+
+	void UpdateShader(Shader *pShaderProgram);
+};
+
+class PointLight : public Light
+{
+private:
+	float m_Quadratic;
+
+public:
+	PointLight() {}
+
+	SETGET(float, Quadratic);
+
+	void UpdateShader(Shader *pShaderProgram);
+};
+
+class SpotLight : public Light
+{
+private:
+	glm::vec3 m_Direction;
+	float m_Quadratic;
+	float m_SpotCutoff;
+	float m_SpotExponent;
+
+public:
+	SpotLight() {}
+
+	SETGET(glm::vec3, Direction);
+	SETGET(float, Quadratic);
+	SETGET(float, SpotCutoff);
+	SETGET(float, SpotExponent);
+
+	void UpdateShader(Shader *pShaderProgram);
+};
+
 #endif
