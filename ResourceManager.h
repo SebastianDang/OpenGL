@@ -4,6 +4,7 @@
 #include "Light.h"
 #include "Camera.h"
 #include "Obj_Object.h"
+#include "Geo_Object.h"
 
 class ResourceManager
 {

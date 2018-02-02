@@ -8,8 +8,8 @@
 class Texture
 {
 private:
-	GLuint m_Id;
-	std::string m_Type;
+	GLuint m_Id = 0;
+	std::string m_Type = "";
 
 public:
 	SETGET(GLuint, Id);
@@ -22,10 +22,10 @@ public:
 class Material
 {
 private:
-	glm::vec3 m_Ambient;
-	glm::vec3 m_Diffuse;
-	glm::vec3 m_Specular;
-	float m_Shininess;
+	glm::vec3 m_Ambient = glm::vec3(0.0f);
+	glm::vec3 m_Diffuse = glm::vec3(0.0f);
+	glm::vec3 m_Specular = glm::vec3(0.0f);
+	float m_Shininess = 0.0f;
 
 public:
 	SETGET(glm::vec3, Ambient);
@@ -67,10 +67,10 @@ protected:
 	std::vector<Material> m_Materials;
 
 	// OpenGL buffers
-	GLuint m_VAO, m_VBO, m_EBO;
+	GLuint m_VAO = 0, m_VBO = 0, m_EBO = 0;
 
 	// Keep track of world in relation to the object.
-	glm::mat4 m_ToWorld;
+	glm::mat4 m_ToWorld = glm::mat4(1.0f);
 
 public:
 	Object();

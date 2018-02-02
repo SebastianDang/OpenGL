@@ -33,7 +33,7 @@ void ResourceManager::Load(const char * pFile)
 
 	// PointLight
 	PointLight *pPoint = new PointLight();
-	pPoint->SetEnabled(false);
+	pPoint->SetEnabled(true);
 	pPoint->SetPosition(glm::vec3(10.0f, 10.0f, 10.0f));
 	pPoint->SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
 	pPoint->SetDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -42,7 +42,7 @@ void ResourceManager::Load(const char * pFile)
 
 	// SpotLight
 	SpotLight *pSpot = new SpotLight();
-	pSpot->SetEnabled(false);
+	pSpot->SetEnabled(true);
 	pSpot->SetPosition(glm::vec3(10.0f, 10.0f, 10.0f));
 	pSpot->SetAmbient(glm::vec3(0.2f, 0.2f, 0.2f));
 	pSpot->SetDiffuse(glm::vec3(0.5f, 0.5f, 0.5f));
@@ -74,6 +74,8 @@ void ResourceManager::Load(const char * pFile)
 
 	// Objects
 	Obj_Object *pObject = new Obj_Object("./assets/obj/pod.obj");
+	//Geo_Object *pObject = new Geo_Object();
+	//pObject->LoadCube();
 	m_Objects.push_back(pObject);
 }
 

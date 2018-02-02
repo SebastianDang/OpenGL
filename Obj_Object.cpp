@@ -4,6 +4,8 @@
 Obj_Object::Obj_Object(const char * filepath)
 	: Object() // Add a call to the superclass constructor in case we need it.
 {
+	ResetToWorld();
+
 	// Break up the filepath, so we can store it for later.
 	std::string fullPath = std::string(filepath);
 	int slash = (int)fullPath.find_last_of("\\/");

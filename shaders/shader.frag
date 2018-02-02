@@ -66,37 +66,39 @@ void main()
     
 	vec3 result = vec3(0.0f, 0.0f, 0.0f);//Set to black in case all lights are off.
 
-	//Light computation for the fragment shader. [DISABLED]
+	// Light computation for the fragment shader. [DISABLED]
 	vec3 norm = normalize(FragNormal);
 	vec3 viewDir = normalize(viewPos - FragPos);
-	//Calculate directional light if it is on.
+	
+    // Calculate directional light if it is on.
 	if(dirLight.on)
 	{
 		result += CalcDirLight(dirLight, norm, viewDir);
 	}
-	//Calculate point light if it is on.
+
+	// Calculate point light if it is on.
 	else if(pointLight.on)
 	{
 		result += CalcPointLight(pointLight, norm, FragPos, viewDir);
 	}
-	//Calculate spot light if it is on.
+
+	// Calculate spot light if it is on.
 	else if(spotLight.on)
 	{
 		result += CalcSpotLight(spotLight, norm, FragPos, viewDir);
 	}
-    color = vec4(result.x, result.y, result.z, 1.0f);
-	
-	//Dynamic Environment mapping.
-    //Diffuse
-	vec4 diffuse_color = vec4(result.x, result.y, result.z, 1.0f);
-	//Reflection
-	vec3 I = normalize(FragPos - viewPos);
-	vec3 R = reflect(I, normalize(FragNormal));
-	vec4 reflect_color = texture(skybox, R) * reflect_intensity;
-	//Combined
-	//color = diffuse_color + reflect_color;
+    
+    // Diffuse
+    vec4 diffuse_color = vec4(result.x, result.y, result.z, 1.0f);
 
-}
+	// Dynamic Environment mapping.
+	//vec3 I = normalize(FragPos - viewPos);
+	//vec3 R = reflect(I, normalize(FragNormal));
+	//vec4 reflect_color = texture(skybox, R) * reflect_intensity;
+
+	// Result
+    color = diffuse_color; //+ reflect_color;
+} 
 
 //Calculates the color when using a directional light.
 vec3 CalcDirLight(DirLight dirLight, vec3 norm, vec3 viewDir)

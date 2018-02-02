@@ -97,8 +97,8 @@ int Object::LoadData(std::vector<glm::vec3> vertices, std::vector<glm::vec3> nor
 int Object::LoadDataFromFile(const char * file)
 {
 	// Initialize min, max, scale values for each coordinate.
-	float min_X = INFINITY, min_Y = INFINITY, min_Z = INFINITY;//Minimum set to infinity so first value is always inputted.
-	float max_X = -INFINITY, max_Y = -INFINITY, max_Z = -INFINITY;//Maximum set to -infinity so first value is always inputted.
+	float min_X = INFINITY, min_Y = INFINITY, min_Z = INFINITY; // Minimum set to infinity so first value is always inputted.
+	float max_X = -INFINITY, max_Y = -INFINITY, max_Z = -INFINITY; // Maximum set to -infinity so first value is always inputted.
 
 	// Same for scale, used to find "max" scale or the longest axis. 
 	// This ensures the ranges of vertices are [-1, 1].
@@ -115,6 +115,7 @@ int Object::LoadDataFromFile(const char * file)
 
 	std::vector<glm::vec3> vertices, normals;
 	std::vector<glm::vec2> texCoords;
+	std::vector<unsigned int> indices;
 
 	// Read the file until the end. "# are commments to be ignored".
 	while (1) {
@@ -160,9 +161,9 @@ int Object::LoadDataFromFile(const char * file)
 			fscanf(objFile, "%d//%d %d//%d %d//%d\n", &faces_v[0], &faces_vn[0], &faces_v[1], &faces_vn[1], &faces_v[2], &faces_vn[2]);
 			//unsigned int faces_v[3], faces_vn[3], faces_vt[3];
 			//fscanf(objFile, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &faces_v[0], &faces_vt[0], &faces_vn[0], &faces_v[1], &faces_vt[1], &faces_vn[1], &faces_v[2], &faces_vt[2], &faces_vn[2]);
-			m_Indices.push_back(faces_v[0] - 1);
-			m_Indices.push_back(faces_v[1] - 1);
-			m_Indices.push_back(faces_v[2] - 1);
+			indices.push_back(faces_v[0] - 1);
+			indices.push_back(faces_v[1] - 1);
+			indices.push_back(faces_v[2] - 1);
 			continue;
 		}
 	}
@@ -192,7 +193,7 @@ int Object::LoadDataFromFile(const char * file)
 		vertices[i].x = vertices[i].x - avg_X;
 		vertices[i].y = vertices[i].y - avg_Y;
 		vertices[i].z = vertices[i].z - avg_Z;
-		vertices[i] *= (1 / (scale_v));
+		vertices[i] *= (1.0f / (scale_v));
 
 		// Throw everything into a container to hold all values.
 		S_Container container;
@@ -201,6 +202,9 @@ int Object::LoadDataFromFile(const char * file)
 		if (i < texCoords_size) container.m_TexCoord = texCoords[i]; // Leaving this empty for now to load simple objs.
 		m_Data.push_back(container);
 	}
+
+	// Update indices.
+	m_Indices = indices;
 
 	// Return 0 if successful.
 	return 0;
