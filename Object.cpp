@@ -259,17 +259,22 @@ void Object::AddMaterial(Material material)
 	m_Materials.push_back(material);
 }
 
-void Object::Translate(glm::vec3 translation)
+void Object::Translate(const glm::vec3 &value)
 {
-	m_ToWorld = glm::translate(glm::mat4(1.0f), translation) * m_ToWorld;
+	m_ToWorld = glm::translate(glm::mat4(1.0f), value) * m_ToWorld;
 }
 
-void Object::Rotate(float degree, glm::vec3 axis)
+void Object::Rotate(const float degree, const glm::vec3 &axis)
 {
 	m_ToWorld = glm::rotate(glm::mat4(1.0f), (degree / 180.0f * glm::pi<float>()), axis) * m_ToWorld;
 }
 
-void Object::Scale(glm::vec3 value)
+void Object::Scale(const glm::vec3 &value)
 {
-	m_ToWorld = glm::scale(glm::mat4(1.0f), value);
+	m_ToWorld = glm::scale(glm::mat4(1.0f), value) * m_ToWorld;
+}
+
+void Object::SetPosition(const glm::vec3 & value)
+{
+	m_ToWorld[3] = glm::vec4(value, 1.0f);
 }

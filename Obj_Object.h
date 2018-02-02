@@ -28,11 +28,5 @@ public:
 	/// </summary>
 	/// <param name="pShaderProgram">Shader to render the object</param>
 	void Render(Shader *pShaderProgram);
-
-	/// <summary>
-	/// Sets the position in world space.
-	/// </summary>
-	/// <param name="pos">New position value</param>
-	void SetPosition(glm::vec3 pos);
 };
 

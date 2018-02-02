@@ -82,6 +82,13 @@ public:
 	/// <returns>Returns the Init member variable</returns>
 	bool IsInit() { return m_IsInit; }
 
+	SETGET(glm::mat4, ToWorld);
+
+	/// <summary>
+	/// Resets the model/world matrix to the identity matrix.
+	/// </summary>
+	void ResetToWorld() { m_ToWorld = glm::mat4(1.0f); }
+
 	/// <summary>
 	///  Load a ppm file from disk.
 	/// </summary>
@@ -129,22 +136,11 @@ public:
 	void AddMaterial(Material material);
 
 	/// <summary>
-	/// Simple getter for the model/world matrix.
-	/// </summary>
-	/// <returns>The current model/world matrix for the object</returns>
-	glm::mat4 GetToWorld() { return m_ToWorld; }
-	
-	/// <summary>
-	/// Resets the model/world matrix to the identity matrix.
-	/// </summary>
-	void ResetToWorld() { m_ToWorld = glm::mat4(1.0f); }
-
-	/// <summary>
 	/// Translate the object. 
 	/// Stacks the current transform onto the current model/world matrix.
 	/// </summary>
 	/// <param name="translation">Displacement vector</param>
-	void Translate(glm::vec3 translation);
+	void Translate(const glm::vec3 &value);
 	
 	/// <summary>
 	/// Rotate the object around an arbitrary axis, in degrees.  
@@ -152,14 +148,20 @@ public:
 	/// </summary>
 	/// <param name="degree">Degree of rotation</param>
 	/// <param name="axis">Axis of rotation</param>
-	void Rotate(float degree, glm::vec3 axis);
+	void Rotate(const float degree, const glm::vec3 &axis);
 
 	/// <summary>
 	/// Scale the object, either uniformly, or non-uniformly.
 	/// Stacks the current transform onto the current model/world matrix.
 	/// </summary>
 	/// <param name="value">Vector to apply scaling to.</param>
-	void Scale(glm::vec3 value);
+	void Scale(const glm::vec3 &value);
+
+	/// <summary>
+	/// Sets the position to a fixed value.
+	/// </summary>
+	/// <param name="value"></param>
+	void SetPosition(const glm::vec3 &value);
 	
 	/// <summary>
 	/// Render that has to be implemented in any inherited class.

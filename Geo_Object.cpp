@@ -68,18 +68,82 @@ void Geo_Object::LoadCube()
 	// Load the data from the cube we created.
 	int success = LoadData(vertices, normals, texCoords, indices, 24);
 	if (success != -1) LoadDataIntoBuffers();
-
-	// Set some default material for now.
-	Material mat;
-	mat.SetAmbient(glm::vec3(0.24725f, 0.2245f, 0.0645f));
-	mat.SetDiffuse(glm::vec3(0.34615f, 0.3143f, 0.0903f));
-	mat.SetSpecular(glm::vec3(0.797357f, 0.723991f, 0.208006f));
-	mat.SetShininess(83.2f);
-	AddMaterial(mat);
 }
 
-void Geo_Object::LoadSphere()
+void Geo_Object::LoadSphere(float radius, int slices, int stacks)
 {
+	float fslices = (float)slices;
+	float fstacks = (float)stacks;
+
+	std::vector <glm::vec3> vertices, normals;
+
+	for (int i = 0; i < slices; i++)
+	{
+		for (int j = 0; j < stacks; j++)
+		{
+			// Top left
+			vertices.push_back(glm::vec3(
+				radius * -cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * -cos(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices)));
+			normals.push_back(glm::normalize(glm::vec3(
+				-cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices),
+				-cos(glm::pi<float>() * (j + 1.0f) / fslices),
+				sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices))));
+			// Top right
+			vertices.push_back(glm::vec3(
+				radius * -cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * (j + 1.0) / fslices),
+				radius * -cos(glm::pi<float>() * (j + 1.0) / fslices),
+				radius * sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * (j + 1.0) / fslices)));
+			normals.push_back(glm::normalize(glm::vec3(
+				-cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * (j + 1.0) / fslices),
+				-cos(glm::pi<float>() * (j + 1.0) / fslices),
+				sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * (j + 1.0) / fslices))));
+			// Bottom right
+			vertices.push_back(glm::vec3(
+				radius * -cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices),
+				radius * -cos(glm::pi<float>() * j / fslices),
+				radius * sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices)));
+			normals.push_back(glm::normalize(glm::vec3(
+				-cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices),
+				-cos(glm::pi<float>() * j / fslices),
+				sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices))));
+
+			// Need to repeat 2 of the vertices since we can only draw triangles. Eliminates the confusion
+			// of array indices.
+			// Top left
+			vertices.push_back(glm::vec3(
+				radius * -cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * -cos(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices)));
+			normals.push_back(glm::normalize(glm::vec3(
+				-cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices),
+				-cos(glm::pi<float>() * (j + 1.0f) / fslices),
+				sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices))));
+			// Bottom right
+			vertices.push_back(glm::vec3(
+				radius * -cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices),
+				radius * -cos(glm::pi<float>() * j / fslices),
+				radius * sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices)));
+			normals.push_back(glm::normalize(glm::vec3(
+				-cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices),
+				-cos(glm::pi<float>() * j / fslices),
+				sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices))));
+			// Bottom left
+			vertices.push_back(glm::vec3(
+				radius * -cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * j / fslices),
+				radius * -cos(glm::pi<float>() * j / fslices),
+				radius * sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * j / fslices)));
+			normals.push_back(glm::normalize(glm::vec3(
+				-cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * j / fslices),
+				-cos(glm::pi<float>() * j / fslices),
+				sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * j / fslices))));
+		}
+	}
+
+	// Load the data from the cube we created.
+	int success = LoadData(vertices, normals, std::vector<glm::vec2>(), std::vector<unsigned int>(), (int)vertices.size());
+	if (success != -1) LoadDataIntoBuffers();
 }
 
 void Geo_Object::Render(Shader * pShaderProgram)

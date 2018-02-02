@@ -18,14 +18,6 @@ Obj_Object::Obj_Object(const char * filepath)
 	// Load the data from the filepath specified
 	int success = LoadDataFromFile(filepath);
 	if (success != -1) LoadDataIntoBuffers();
-
-	// Set some default material for now.
-	Material mat;
-	mat.SetAmbient(glm::vec3(0.24725f, 0.2245f, 0.0645f));
-	mat.SetDiffuse(glm::vec3(0.34615f, 0.3143f, 0.0903f));
-	mat.SetSpecular(glm::vec3(0.797357f, 0.723991f, 0.208006f));
-	mat.SetShininess(83.2f);
-	AddMaterial(mat);
 }
 
 Obj_Object::~Obj_Object()
@@ -64,9 +56,4 @@ void Obj_Object::Render(Shader *pShaderProgram)
 
 	// Unbind.
 	glBindVertexArray(0);
-}
-
-void Obj_Object::SetPosition(glm::vec3 pos)
-{
-	m_ToWorld[3] = glm::vec4(pos, 1.0f);
 }

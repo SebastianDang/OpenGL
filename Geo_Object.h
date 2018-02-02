@@ -20,7 +20,10 @@ public:
 	/// <summary>
 	/// Create and load a sphere into the buffer.
 	/// </summary>
-	void LoadSphere();
+	/// <param name="radius"></param>
+	/// <param name="slices"></param>
+	/// <param name="stacks"></param>
+	void LoadSphere(float radius, int slices, int stacks);
 
 	/// <summary>
 	/// Render the geometry object.

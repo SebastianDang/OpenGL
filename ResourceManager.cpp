@@ -73,10 +73,22 @@ void ResourceManager::Load(const char * pFile)
 	SetCurrentCamera(1);
 
 	// Objects
-	Obj_Object *pObject = new Obj_Object("./assets/obj/pod.obj");
-	//Geo_Object *pObject = new Geo_Object();
-	//pObject->LoadCube();
-	m_Objects.push_back(pObject);
+	Material mat;
+	mat.SetAmbient(glm::vec3(0.24725f, 0.2245f, 0.0645f));
+	mat.SetDiffuse(glm::vec3(0.34615f, 0.3143f, 0.0903f));
+	mat.SetSpecular(glm::vec3(0.797357f, 0.723991f, 0.208006f));
+	mat.SetShininess(83.2f);
+	
+	Obj_Object *pObj = new Obj_Object("./assets/obj/pod.obj");
+	pObj->AddMaterial(mat);
+	m_Objects.push_back(pObj);
+
+	Geo_Object *pGeo = new Geo_Object();
+	pGeo->LoadSphere(1.0f, 20, 20);
+	pGeo->Scale(glm::vec3(2.0f));
+	pGeo->Translate(glm::vec3(0.0f, -3.0f, 0.0f));
+	pGeo->AddMaterial(mat);
+	m_Objects.push_back(pGeo);
 }
 
 void ResourceManager::Save()
