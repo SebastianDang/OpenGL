@@ -150,12 +150,6 @@ void Geo_Object::Render(Shader * pShaderProgram)
 {
 	if (!IsInit() || !pShaderProgram) return;
 
-	// Update any materials this has.
-	for (int i = 0; i < (int)m_Materials.size(); i++)
-	{
-		m_Materials[i].UpdateShader(pShaderProgram);
-	}
-
 	// Update any variables that are with this object.
 	pShaderProgram->Set("model", m_ToWorld);
 

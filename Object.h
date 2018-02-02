@@ -64,7 +64,6 @@ protected:
 	std::vector<S_Container> m_Data;
 	std::vector<unsigned int> m_Indices; 
 	std::vector<Texture> m_Textures;
-	std::vector<Material> m_Materials;
 
 	// OpenGL buffers
 	GLuint m_VAO = 0, m_VBO = 0, m_EBO = 0;
@@ -128,12 +127,6 @@ public:
 	/// </summary>
 	/// <param name="texture"></param>
 	void AddTexture(Texture texture);
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="material"></param>
-	void AddMaterial(Material material);
 
 	/// <summary>
 	/// Translate the object. 

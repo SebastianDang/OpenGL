@@ -73,22 +73,35 @@ void ResourceManager::Load(const char * pFile)
 	SetCurrentCamera(1);
 
 	// Objects
-	Material mat;
-	mat.SetAmbient(glm::vec3(0.24725f, 0.2245f, 0.0645f));
-	mat.SetDiffuse(glm::vec3(0.34615f, 0.3143f, 0.0903f));
-	mat.SetSpecular(glm::vec3(0.797357f, 0.723991f, 0.208006f));
-	mat.SetShininess(83.2f);
+	Material *mat = new Material();
+	mat->SetAmbient(glm::vec3(0.24725f, 0.2245f, 0.0645f));
+	mat->SetDiffuse(glm::vec3(0.34615f, 0.3143f, 0.0903f));
+	mat->SetSpecular(glm::vec3(0.797357f, 0.723991f, 0.208006f));
+	mat->SetShininess(83.2f);
+	AddMaterial("default", mat);
 	
-	Obj_Object *pObj = new Obj_Object("./assets/obj/pod.obj");
-	pObj->AddMaterial(mat);
-	m_Objects.push_back(pObj);
+	Obj_Object *Obj = new Obj_Object("./assets/obj/pod.obj");
+	Geo_Object *Geo = new Geo_Object();
+	Geo->LoadSphere(1.0f, 20, 20);
 
-	Geo_Object *pGeo = new Geo_Object();
-	pGeo->LoadSphere(1.0f, 20, 20);
-	pGeo->Scale(glm::vec3(2.0f));
-	pGeo->Translate(glm::vec3(0.0f, -3.0f, 0.0f));
-	pGeo->AddMaterial(mat);
-	m_Objects.push_back(pGeo);
+	AddLoadedObject("obj", Obj);
+	AddLoadedObject("geo", Geo);
+
+	Instance_Object *pInstance1 = new Instance_Object(*Geo);
+	pInstance1->SetMaterial(*mat);
+	pInstance1->Translate(glm::vec3(-2.0f, 0.0f, 0.0f));
+
+	Instance_Object *pInstance2 = new Instance_Object(*Geo);
+	pInstance2->SetMaterial(*mat);
+	pInstance2->Translate(glm::vec3(2.0f, 0.0f, 0.0f));
+
+	Instance_Object *pInstance3 = new Instance_Object(*Geo);
+	pInstance3->SetMaterial(*mat);
+	pInstance3->Translate(glm::vec3(0.0f, -2.0f, 0.0f));
+	
+	AddObject(pInstance1);
+	AddObject(pInstance2);
+	AddObject(pInstance3);
 }
 
 void ResourceManager::Save()

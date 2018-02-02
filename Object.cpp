@@ -254,11 +254,6 @@ void Object::AddTexture(Texture texture)
 	m_Textures.push_back(texture);
 }
 
-void Object::AddMaterial(Material material)
-{
-	m_Materials.push_back(material);
-}
-
 void Object::Translate(const glm::vec3 &value)
 {
 	m_ToWorld = glm::translate(glm::mat4(1.0f), value) * m_ToWorld;
