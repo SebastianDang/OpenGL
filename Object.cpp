@@ -231,7 +231,7 @@ void Object::LoadDataIntoBuffers()
 	// If there are indices, we can set them here, otherwise we don't use them.
 	if ((int)m_Indices.size() > 0)
 	{
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO); //Bind indices buffer.
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO); // Bind indices buffer.
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(int), &m_Indices[0], GL_STATIC_DRAW);
 	}
 

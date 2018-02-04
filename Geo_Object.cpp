@@ -153,9 +153,6 @@ void Geo_Object::Render(Shader * pShaderProgram)
 	// Update any variables that are with this object.
 	pShaderProgram->Set("model", m_ToWorld);
 
-	// Use this shader.
-	pShaderProgram->Use();
-
 	// Bind for rendering.
 	glBindVertexArray(m_VAO);
 

@@ -6,6 +6,7 @@
 #include "Obj_Object.h"
 #include "Geo_Object.h"
 #include "Instance_Object.h"
+#include "Skybox.h"
 
 class ResourceManager
 {

@@ -102,6 +102,10 @@ void ResourceManager::Load(const char * pFile)
 	AddObject(pInstance1);
 	AddObject(pInstance2);
 	AddObject(pInstance3);
+
+
+	Skybox *pSky = new Skybox();
+	AddObject(pSky);
 }
 
 void ResourceManager::Save()

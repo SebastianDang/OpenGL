@@ -29,7 +29,8 @@ void Instance_Object::SetMaterial(Material & mat)
 
 void Instance_Object::Render(Shader * pShaderProgram)
 {
-	if (m_pMaterial) m_pMaterial->UpdateShader(pShaderProgram);
+	if (m_pMaterial) 
+		m_pMaterial->UpdateShader(pShaderProgram);
 	if (m_pObject)
 	{
 		m_pObject->SetToWorld(m_ToWorld);

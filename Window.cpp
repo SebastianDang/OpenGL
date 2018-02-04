@@ -130,7 +130,6 @@ void Window::display_callback(GLFWwindow* window)
 
 	if (pManager)
 	{
-
 		// For each light
 		for (int l = 0; l < pManager->GetNumLights(); l++)
 		{
@@ -140,25 +139,42 @@ void Window::display_callback(GLFWwindow* window)
 				Shader *pShader = pManager->GetShader("object");
 				if (pShader)
 				{
+					pShader->Use();
 					pShader->Set("view", Window::V);
 					pShader->Set("projection", Window::P);
 					pLight->UpdateShader(pShader);
 				}
 			}
 		}
-		
+
 		// For each object
 		for (int i = 0; i < pManager->GetNumObjects(); i++)
 		{
 			Object *pObject = pManager->GetObject(i);
-			if (pObject)
+			Instance_Object *pInstance = dynamic_cast<Instance_Object*>(pObject);
+			Skybox *pSky = dynamic_cast<Skybox*>(pObject);
+
+			if (pInstance)
 			{
 				Shader *pShader = pManager->GetShader("object");
 				if (pShader)
 				{
+					pShader->Use();
 					pShader->Set("view", Window::V);
 					pShader->Set("projection", Window::P);
 					pObject->Render(pShader);
+				}
+			}
+
+			if (pSky)
+			{
+				Shader *pSkyShader = pManager->GetShader("skybox");
+				if (pSkyShader)
+				{
+					pSkyShader->Use();
+					pSkyShader->Set("view", glm::mat4(glm::mat3(Window::V)));
+					pSkyShader->Set("projection", Window::P);
+					pObject->Render(pSkyShader);
 				}
 			}
 		}
