@@ -3,40 +3,6 @@
 #include "Shader.h"
 
 /// <summary>
-/// Texture id, with a string type.
-/// </summary>
-class Texture
-{
-private:
-	GLuint m_Id = 0;
-	std::string m_Type = "";
-
-public:
-	SETGET(GLuint, Id);
-	SETGET(std::string, Type);
-};
-
-/// Represent the material for the object.
-/// TODO: Implement other types for unique material types.
-/// </summary>
-class Material
-{
-private:
-	glm::vec3 m_Ambient = glm::vec3(0.0f);
-	glm::vec3 m_Diffuse = glm::vec3(0.0f);
-	glm::vec3 m_Specular = glm::vec3(0.0f);
-	float m_Shininess = 0.0f;
-
-public:
-	SETGET(glm::vec3, Ambient);
-	SETGET(glm::vec3, Diffuse);
-	SETGET(glm::vec3, Specular);
-	SETGET(float, Shininess)
-
-	void UpdateShader(Shader *pShaderProgram);
-};
-
-/// <summary>
 /// Container: [X, Y, Z] [R, G, B] [S, T]
 /// For each data point, we store the vertex, normal, and texture coordinates.
 /// </summary>
@@ -63,8 +29,7 @@ protected:
 	// Data
 	std::vector<S_Container> m_Data;
 	std::vector<unsigned int> m_Indices; 
-	std::vector<Texture> m_Textures;
-
+	
 	// OpenGL buffers
 	GLuint m_VAO = 0, m_VBO = 0, m_EBO = 0;
 
@@ -74,6 +39,15 @@ protected:
 public:
 	Object();
 	~Object();
+
+	/// <summary>
+	///  Load a ppm file from disk.
+	/// </summary>
+	/// <param name="filename">The location of the PPM file.  If the file is not found, an error message</param>
+	/// <param name="width">This will be modified to contain the width of the loaded image, or 0 if file not found</param>
+	/// <param name="height">This will be modified to contain the height of the loaded image, or 0 if file not found</param>
+	/// <returns>RGB pixel data as interleaved unsigned chars (R0 G0 B0 R1 G1 B1 R2 G2 B2 .... etc) or 0 if an error ocured</returns>
+	static unsigned char* LoadPPM(const char* filename, int& width, int& height);
 
 	/// <summary>
 	/// Set to true when the buffers objects are generated and loaded. This means it's ready to 'render'.
@@ -89,15 +63,6 @@ public:
 	void ResetToWorld() { m_ToWorld = glm::mat4(1.0f); }
 
 	/// <summary>
-	///  Load a ppm file from disk.
-	/// </summary>
-	/// <param name="filename">The location of the PPM file.  If the file is not found, an error message</param>
-	/// <param name="width">This will be modified to contain the width of the loaded image, or 0 if file not found</param>
-	/// <param name="height">This will be modified to contain the height of the loaded image, or 0 if file not found</param>
-	/// <returns>RGB pixel data as interleaved unsigned chars (R0 G0 B0 R1 G1 B1 R2 G2 B2 .... etc) or 0 if an error ocured</returns>
-	unsigned char* LoadPPM(const char* filename, int& width, int& height);
-
-	/// <summary>
 	/// Loads data from scratch, using defined vertices, normals, texCoords, indices. The count is how many to add.
 	/// </summary>
 	/// <param name="vertices">Vertex</param>
@@ -106,7 +71,7 @@ public:
 	/// <param name="indices">Order of drawing, if we want to use glDrawElements, if not, then glDrawArrays will be used.</param>
 	/// <param name="count">Number of elements to load into the object.</param>
 	/// <returns></returns>
-	int LoadData(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> texCoords, std::vector<unsigned int> indices, int count);
+	int LoadData(const std::vector<glm::vec3> &vertices, const std::vector<glm::vec3> &normals, const std::vector<glm::vec2> &texCoords, const std::vector<unsigned int> &indices, const int &count);
 
 	/// <summary>
 	/// Loads geometry data from file. 
@@ -121,12 +86,6 @@ public:
 	///  Load geometry data stored, and put it into the VAO, VBO, so that we can render it.
 	/// </summary>
 	void LoadDataIntoBuffers();
-
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="texture"></param>
-	void AddTexture(Texture texture);
 
 	/// <summary>
 	/// Translate the object. 

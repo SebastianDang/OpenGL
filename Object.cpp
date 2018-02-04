@@ -1,19 +1,9 @@
 #include "stdafx.h"
 #include "Object.h"
 
-void Material::UpdateShader(Shader * pShaderProgram)
-{
-	if (!pShaderProgram) return;
-	pShaderProgram->Set("material.ambient", m_Ambient.x, m_Ambient.y, m_Ambient.z);
-	pShaderProgram->Set("material.diffuse", m_Diffuse.x, m_Diffuse.y, m_Diffuse.z);
-	pShaderProgram->Set("material.specular", m_Specular.x, m_Specular.y, m_Specular.z);
-	pShaderProgram->Set("material.shininess", m_Shininess);
-	pShaderProgram->Set("reflect_intensity", m_Shininess / 100.0f);
-}
-
 Object::Object()
 {
-	m_ToWorld = glm::mat4(1.0f);
+	ResetToWorld();
 }
 
 Object::~Object()
@@ -71,7 +61,7 @@ unsigned char* Object::LoadPPM(const char* filename, int& width, int& height)
 	return rawData; // Return rawData or 0 if failed.
 }
 
-int Object::LoadData(std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, std::vector<glm::vec2> texCoords, std::vector<unsigned int> indices, int count)
+int Object::LoadData(const std::vector<glm::vec3> &vertices, const std::vector<glm::vec3> &normals, const std::vector<glm::vec2> &texCoords, const std::vector<unsigned int> &indices, const int &count)
 {
 	// Let us enforce that count is always less than or equal to the number of elements.
 	int vertices_size = (int)vertices.size();
@@ -212,7 +202,7 @@ int Object::LoadDataFromFile(const char * file)
 
 void Object::LoadDataIntoBuffers()
 {
-	// Make sure we actually have data first.
+	// Make sure we actually have data first. This checks if data was loaded yet.
 	if ((int)m_Data.size() < 0) return;
 
 	// Create buffers/arrays.
@@ -226,9 +216,6 @@ void Object::LoadDataIntoBuffers()
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBO); //Bind Container buffer.
 	glBufferData(GL_ARRAY_BUFFER, m_Data.size() * sizeof(S_Container), &m_Data[0], GL_STATIC_DRAW); // Set vertex buffer to the Container.
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO); //Bind indices buffer.
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(int), &m_Indices[0], GL_STATIC_DRAW);
-
 	// Vertex Positions.
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(S_Container), (GLvoid*)offsetof(S_Container, m_Vertex));
@@ -241,17 +228,19 @@ void Object::LoadDataIntoBuffers()
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(S_Container), (GLvoid*)offsetof(S_Container, m_TexCoord));
 
+	// If there are indices, we can set them here, otherwise we don't use them.
+	if ((int)m_Indices.size() > 0)
+	{
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO); //Bind indices buffer.
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(int), &m_Indices[0], GL_STATIC_DRAW);
+	}
+
 	// Unbind.
-	glBindBuffer(GL_ARRAY_BUFFER, 0); //Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind.
-	glBindVertexArray(0); //Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO.
+	glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind.
+	glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO.
 
-	// Fully initialized to render.
+	// Data is loaded, buffers are populated, so we can render now.
 	m_IsInit = true;
-}
-
-void Object::AddTexture(Texture texture)
-{
-	m_Textures.push_back(texture);
 }
 
 void Object::Translate(const glm::vec3 &value)
