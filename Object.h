@@ -49,6 +49,8 @@ public:
 	/// <returns>RGB pixel data as interleaved unsigned chars (R0 G0 B0 R1 G1 B1 R2 G2 B2 .... etc) or 0 if an error ocured</returns>
 	static unsigned char* LoadPPM(const char* filename, int& width, int& height);
 
+	static GLuint LoadCubemap(std::vector<const char*> faces);
+
 	/// <summary>
 	/// Set to true when the buffers objects are generated and loaded. This means it's ready to 'render'.
 	/// </summary>

@@ -1,17 +1,17 @@
 #pragma once
-#include "Object.h"
+#include "Geo_Object.h"
 
-class Skybox : public Object
+class Skybox : public Geo_Object
 {
 private:
 	std::vector<const char *> m_Faces;
 	GLuint m_CubemapTexture;
 
 public:
-	Skybox();
+	Skybox(std::vector<const char*> faces);
 	~Skybox();
 
-	GLuint LoadCubemap(std::vector<const GLchar*> faces);
+	void LoadDataIntoBuffers();
 
 	/// <summary>
 	/// Render the geometry object.

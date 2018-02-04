@@ -11,9 +11,9 @@ Geo_Object::~Geo_Object()
 	// The buffer objects are cleared in the base class. Delete anything else created here.
 }
 
-void Geo_Object::LoadCube()
+int Geo_Object::LoadCube(float size)
 {
-	GLfloat vertices_array[] = 
+	GLfloat vertices_array[] =
 	{
 		// Front vertices
 		-1.0f, -1.0f,  1.0f, // bottom left
@@ -28,9 +28,9 @@ void Geo_Object::LoadCube()
 		-1.0f,  1.0f, -1.0f // top left
 	};
 
-	GLuint indices_array[] = 
+	GLuint indices_array[] =
 	{  // Note that we start from 0!
-		// Front face
+	   // Front face
 		0, 1, 2,
 		2, 3, 0,
 		// Top face
@@ -55,7 +55,7 @@ void Geo_Object::LoadCube()
 	std::vector<unsigned int> indices;
 
 	// Data.
-	for (int i = 0; i <= 21; i+=3)
+	for (int i = 0; i <= 21; i += 3)
 	{
 		vertices.push_back(glm::vec3(vertices_array[i], vertices_array[i + 1], vertices_array[i + 2]));
 		normals.push_back(glm::vec3(0.0f));
@@ -66,11 +66,16 @@ void Geo_Object::LoadCube()
 		indices.push_back(indices_array[i]);
 
 	// Load the data from the cube we created.
-	int success = LoadData(vertices, normals, texCoords, indices, 24);
+	return LoadData(vertices, normals, texCoords, indices, 24);
+}
+
+void Geo_Object::LoadCubeIntoBuffer(float size)
+{
+	int success = LoadCube(size);
 	if (success != -1) LoadDataIntoBuffers();
 }
 
-void Geo_Object::LoadSphere(float radius, int slices, int stacks)
+int Geo_Object::LoadSphere(float radius, int slices, int stacks)
 {
 	float fslices = (float)slices;
 	float fstacks = (float)stacks;
@@ -141,8 +146,13 @@ void Geo_Object::LoadSphere(float radius, int slices, int stacks)
 		}
 	}
 
-	// Load the data from the cube we created.
-	int success = LoadData(vertices, normals, std::vector<glm::vec2>(), std::vector<unsigned int>(), (int)vertices.size());
+	// Load the data from the sphere we created.
+	return LoadData(vertices, normals, std::vector<glm::vec2>(), std::vector<unsigned int>(), (int)vertices.size());
+}
+
+void Geo_Object::LoadSphereIntoBuffer(float radius, int slices, int stacks)
+{
+	int success = LoadSphere(radius, slices, stacks);
 	if (success != -1) LoadDataIntoBuffers();
 }
 

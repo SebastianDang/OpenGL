@@ -8,6 +8,7 @@ Shader::Shader(const char * vertex_file_path, const char * fragment_file_path)
 	m_Id = loaded_id;
 }
 
+// TODO: Change loading/compiling process. Hangs on failed compilation.
 GLuint Shader::LoadShaders(const char * vertex_file_path, const char * fragment_file_path)
 {
 	// Create the shaders
@@ -17,13 +18,15 @@ GLuint Shader::LoadShaders(const char * vertex_file_path, const char * fragment_
 	// Read the Vertex Shader code from the file
 	std::string VertexShaderCode;
 	std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
-	if (VertexShaderStream.is_open()) {
+	if (VertexShaderStream.is_open())
+	{
 		std::string Line = "";
 		while (getline(VertexShaderStream, Line))
 			VertexShaderCode += "\n" + Line;
 		VertexShaderStream.close();
 	}
-	else {
+	else 
+	{
 		printf("Impossible to open %s. Check to make sure the file exists and is in the right directory !\n", vertex_file_path);
 		printf("The current working directory is:");
 #ifdef _WIN32
@@ -38,7 +41,8 @@ GLuint Shader::LoadShaders(const char * vertex_file_path, const char * fragment_
 	// Read the Fragment Shader code from the file
 	std::string FragmentShaderCode;
 	std::ifstream FragmentShaderStream(fragment_file_path, std::ios::in);
-	if (FragmentShaderStream.is_open()) {
+	if (FragmentShaderStream.is_open()) 
+	{
 		std::string Line = "";
 		while (getline(FragmentShaderStream, Line))
 			FragmentShaderCode += "\n" + Line;

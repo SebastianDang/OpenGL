@@ -15,7 +15,8 @@ public:
 	/// <summary>
 	/// Create and load a cube into the buffer.
 	/// </summary>
-	void LoadCube();
+	int LoadCube(float size);
+	void LoadCubeIntoBuffer(float size);
 
 	/// <summary>
 	/// Create and load a sphere into the buffer.
@@ -23,7 +24,8 @@ public:
 	/// <param name="radius"></param>
 	/// <param name="slices"></param>
 	/// <param name="stacks"></param>
-	void LoadSphere(float radius, int slices, int stacks);
+	int LoadSphere(float radius, int slices, int stacks);
+	void LoadSphereIntoBuffer(float radius, int slices, int stacks);
 
 	/// <summary>
 	/// Render the geometry object.

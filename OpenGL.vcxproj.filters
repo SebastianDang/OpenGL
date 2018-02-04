@@ -51,9 +51,6 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Skybox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Object.h">
       <Filter>Header Files\Object</Filter>
     </ClInclude>
@@ -65,6 +62,9 @@
     </ClInclude>
     <ClInclude Include="Obj_Object.h">
       <Filter>Header Files\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -110,16 +110,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="shaders\shader.frag">
-      <Filter>Shader Files</Filter>
-    </None>
-    <None Include="shaders\shader.vert">
-      <Filter>Shader Files</Filter>
-    </None>
     <None Include="shaders\skybox.frag">
       <Filter>Shader Files</Filter>
     </None>
     <None Include="shaders\skybox.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\object.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="shaders\object.vert">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

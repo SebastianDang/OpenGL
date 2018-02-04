@@ -20,7 +20,7 @@ void ResourceManager::Load(const char * pFile)
 	}
 
 	// Load any required shaders here.
-	LoadShader("shaders/shader.vert", "shaders/shader.frag", "object");
+	LoadShader("shaders/object.vert", "shaders/object.frag", "object");
 	LoadShader("shaders/skybox.vert", "shaders/skybox.frag", "skybox");
 
 	// Directional Light
@@ -61,18 +61,28 @@ void ResourceManager::Load(const char * pFile)
 	glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 20.0f);
 	glm::vec3 camera_look_at = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
-	Camera *pCamera = new Camera(camera_pos, camera_look_at, camera_up);
-	m_Cameras.push_back(pCamera);
-
+	Camera *pDefaultCamera = new Camera(camera_pos, camera_look_at, camera_up);
 	Camera *pThirdCamera = new ThirdPersonCamera(glm::vec3(0.0f));
-	m_Cameras.push_back(pThirdCamera);
-
 	Camera *pFirstCamera = new FirstPersonCamera(glm::vec3(0.0f));
-	m_Cameras.push_back(pFirstCamera);
 	
-	SetCurrentCamera(1);
+	// Add to cameras.
+	m_Cameras.push_back(pDefaultCamera);
+	m_Cameras.push_back(pThirdCamera);
+	m_Cameras.push_back(pFirstCamera);
+	SetCurrentCamera(1); // Set the current one that we use.
 
-	// Objects
+	// Load all the skybox faces.
+	std::vector<const char *> faces;
+	faces.push_back("assets/skybox/right.ppm");
+	faces.push_back("assets/skybox/left.ppm");
+	faces.push_back("assets/skybox/top.ppm");
+	faces.push_back("assets/skybox/bottom.ppm");
+	faces.push_back("assets/skybox/back.ppm");
+	faces.push_back("assets/skybox/front.ppm");
+	Skybox *pSky = new Skybox(faces);
+	AddObject(pSky);
+
+	// Load materials and objects
 	Material *mat = new Material();
 	mat->SetAmbient(glm::vec3(0.24725f, 0.2245f, 0.0645f));
 	mat->SetDiffuse(glm::vec3(0.34615f, 0.3143f, 0.0903f));
@@ -82,30 +92,25 @@ void ResourceManager::Load(const char * pFile)
 	
 	Obj_Object *Obj = new Obj_Object("./assets/obj/pod.obj");
 	Geo_Object *Geo = new Geo_Object();
-	Geo->LoadSphere(1.0f, 20, 20);
+	Geo->LoadSphereIntoBuffer(1.0f, 20, 20);
 
 	AddLoadedObject("obj", Obj);
 	AddLoadedObject("geo", Geo);
 
-	Instance_Object *pInstance1 = new Instance_Object(*Geo);
-	pInstance1->SetMaterial(*mat);
-	pInstance1->Translate(glm::vec3(-2.0f, 0.0f, 0.0f));
-
-	Instance_Object *pInstance2 = new Instance_Object(*Geo);
-	pInstance2->SetMaterial(*mat);
-	pInstance2->Translate(glm::vec3(2.0f, 0.0f, 0.0f));
-
-	Instance_Object *pInstance3 = new Instance_Object(*Geo);
-	pInstance3->SetMaterial(*mat);
-	pInstance3->Translate(glm::vec3(0.0f, -2.0f, 0.0f));
-	
-	AddObject(pInstance1);
-	AddObject(pInstance2);
-	AddObject(pInstance3);
-
-
-	Skybox *pSky = new Skybox();
-	AddObject(pSky);
+	// Create instances
+	int num_instances = 10;
+	float num_instancesf = float(num_instances);
+	for (int i = 0; i <= num_instances; i++)
+	{
+		Instance_Object *pInstance = new Instance_Object(*Geo);
+		pInstance->SetMaterial(*mat);
+		float radius = num_instancesf / 2.0f;
+		float x = glm::cos(360.0f / num_instancesf * (float)i) * radius;
+		float y = 0.0f;
+		float z = glm::sin(360.0f / num_instancesf * (float)i) * radius;
+		pInstance->Translate(glm::vec3(x, y, z));
+		AddObject(pInstance);
+	}
 }
 
 void ResourceManager::Save()

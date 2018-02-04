@@ -61,6 +61,50 @@ unsigned char* Object::LoadPPM(const char* filename, int& width, int& height)
 	return rawData; // Return rawData or 0 if failed.
 }
 
+GLuint Object::LoadCubemap(std::vector<const char*> faces)
+{
+	// Hold the textureID (This will be the textureID to return).
+	GLuint textureID;
+
+	// Define variables to hold height map's width, height, pixel information.
+	int width, height;
+	unsigned char * image;
+
+	// Create ID for texture.
+	glGenTextures(1, &textureID);
+	glActiveTexture(GL_TEXTURE0);// Set this texture to be the active texture (0).
+
+	// Set this texture to be the one we are working with.
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	// Generate the texture.
+	for (GLuint i = 0; i < faces.size(); i++)
+	{
+		image = Object::LoadPPM(faces[i], width, height);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+	}
+
+	// Make sure no bytes are padded:
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	// Select GL_MODULATE to mix texture with polygon color for shading:
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	// Use bilinear interpolation:
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Use clamp to edge to hide skybox edges:
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);//X
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);//Y
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);//Z
+
+	// Unbind the texture cube map.
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+	// Return the textureID, we need to keep track of this texture variable.
+	return textureID;
+}
+
 int Object::LoadData(const std::vector<glm::vec3> &vertices, const std::vector<glm::vec3> &normals, const std::vector<glm::vec2> &texCoords, const std::vector<unsigned int> &indices, const int &count)
 {
 	// Let us enforce that count is always less than or equal to the number of elements.

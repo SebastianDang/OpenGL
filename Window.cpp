@@ -150,22 +150,11 @@ void Window::display_callback(GLFWwindow* window)
 		// For each object
 		for (int i = 0; i < pManager->GetNumObjects(); i++)
 		{
+			// Get the object out.
 			Object *pObject = pManager->GetObject(i);
-			Instance_Object *pInstance = dynamic_cast<Instance_Object*>(pObject);
+
+			// Special case for skybox.
 			Skybox *pSky = dynamic_cast<Skybox*>(pObject);
-
-			if (pInstance)
-			{
-				Shader *pShader = pManager->GetShader("object");
-				if (pShader)
-				{
-					pShader->Use();
-					pShader->Set("view", Window::V);
-					pShader->Set("projection", Window::P);
-					pObject->Render(pShader);
-				}
-			}
-
 			if (pSky)
 			{
 				Shader *pSkyShader = pManager->GetShader("skybox");
@@ -177,8 +166,18 @@ void Window::display_callback(GLFWwindow* window)
 					pObject->Render(pSkyShader);
 				}
 			}
+			else
+			{
+				Shader *pShader = pManager->GetShader("object");
+				if (pShader)
+				{
+					pShader->Use();
+					pShader->Set("view", Window::V);
+					pShader->Set("projection", Window::P);
+					pObject->Render(pShader);
+				}
+			}
 		}
-
 	}
 
 	// Swap buffers
