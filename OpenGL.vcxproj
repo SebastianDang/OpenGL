@@ -153,40 +153,40 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Geo_Object.h" />
-    <ClInclude Include="Instance_Object.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="Obj_Object.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="Skybox.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="src/Camera.h" />
+    <ClInclude Include="src/Geo_Object.h" />
+    <ClInclude Include="src/Instance_Object.h" />
+    <ClInclude Include="src/Light.h" />
+    <ClInclude Include="src/Material.h" />
+    <ClInclude Include="src/Object.h" />
+    <ClInclude Include="src/Obj_Object.h" />
+    <ClInclude Include="src/resource.h" />
+    <ClInclude Include="src/ResourceManager.h" />
+    <ClInclude Include="src/Shader.h" />
+    <ClInclude Include="src/Skybox.h" />
+    <ClInclude Include="src/stdafx.h" />
+    <ClInclude Include="src/targetver.h" />
+    <ClInclude Include="src/Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Geo_Object.cpp" />
-    <ClCompile Include="Instance_Object.cpp" />
-    <ClCompile Include="Light.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="Obj_Object.cpp" />
-    <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="Skybox.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="src/Camera.cpp" />
+    <ClCompile Include="src/Geo_Object.cpp" />
+    <ClCompile Include="src/Instance_Object.cpp" />
+    <ClCompile Include="src/Light.cpp" />
+    <ClCompile Include="src/main.cpp" />
+    <ClCompile Include="src/Material.cpp" />
+    <ClCompile Include="src/Object.cpp" />
+    <ClCompile Include="src/Obj_Object.cpp" />
+    <ClCompile Include="src/ResourceManager.cpp" />
+    <ClCompile Include="src/Shader.cpp" />
+    <ClCompile Include="src/Skybox.cpp" />
+    <ClCompile Include="src/stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="src/Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
