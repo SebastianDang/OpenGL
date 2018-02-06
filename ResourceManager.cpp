@@ -62,9 +62,12 @@ void ResourceManager::Load(const char * pFile)
 	glm::vec3 camera_look_at = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::vec3 camera_up = glm::vec3(0.0f, 1.0f, 0.0f);
 	Camera *pDefaultCamera = new Camera(camera_pos, camera_look_at, camera_up);
-	Camera *pThirdCamera = new ThirdPersonCamera(glm::vec3(0.0f));
-	Camera *pFirstCamera = new FirstPersonCamera(glm::vec3(0.0f));
+	ThirdPersonCamera *pThirdCamera = new ThirdPersonCamera(glm::vec3(0.0f));
+	FirstPersonCamera *pFirstCamera = new FirstPersonCamera(glm::vec3(0.0f));
 	
+	glm::vec3 direction = glm::vec3(glm::rotate(glm::mat4(1.0f), (30.0f / 180.0f * glm::pi<float>()), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));
+	pFirstCamera->LockFieldOfView(direction, 180.0f);
+
 	// Add to cameras.
 	m_Cameras.push_back(pDefaultCamera);
 	m_Cameras.push_back(pThirdCamera);

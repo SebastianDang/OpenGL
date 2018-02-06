@@ -80,7 +80,19 @@ GLuint Object::LoadCubemap(std::vector<const char*> faces)
 	// Generate the texture.
 	for (GLuint i = 0; i < faces.size(); i++)
 	{
-		image = Object::LoadPPM(faces[i], width, height);
+		std::string fileName = std::string(faces[i]);
+
+		// We search for the file extension.
+		int ext = fileName.find_last_of('.');
+		if (ext == std::string::npos) continue;
+
+		// If there's the extension, we attempt to open it by type.
+		// TODO: put in other image types.
+		// For now, we'll support just ppm. This will make it more flexible to load cubemaps, and possibly mix/match file types.
+		std::string extension = fileName.substr(ext + 1);
+		if (extension.compare("ppm") == 0) image = Object::LoadPPM(fileName.c_str(), width, height);
+		else image = 0;
+
 		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	}
 

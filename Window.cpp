@@ -6,28 +6,32 @@
 using namespace std;
 
 // Set the title of the program. This will remain static.
-const char* window_title = "The Beginning";
+const char* window_title = "OpenGL";
 
-// Window size properties.
-int Window::Width;//Width of the window (This will be set in window_resize callback).
-int Window::Height;//Height of the window (This will be set in window_resize callback).
+// Window properties.
+float Window::FieldOfView = 45.0f;
+float Window::NearPlane = 0.1f;
+float Window::FarPlane = 1000.0f;
+int Window::Width; // Width of the window (This will be set in window_resize callback).
+int Window::Height; // Height of the window (This will be set in window_resize callback).
 
 // Mouse properties.
-int Window::Mouse_Status = E_MOUSE::IDLE;//Define the mouse status for any clicks.
-glm::vec3 Window::LastPoint;//Last point clicked.
-glm::vec3 Window::CurrPoint;//Current point clicked.
-
-// Matrix Coordinate Transformation properties.
-glm::mat4 Window::P; //Perspective.
-glm::mat4 Window::V; //View.
+int Window::Mouse_Status = E_MOUSE::IDLE; // Define the mouse status for any clicks.
+glm::vec3 Window::LastPoint; // Last point clicked.
+glm::vec3 Window::CurrPoint; // Current point clicked.
 
 // Frame Time calculation.
-float Window::LastFrameTime; //Last frame time recorded.
-float Window::DeltaFrameTime; //The time since the last frame time, from the current frame time.
+float Window::LastFrameTime; // Last frame time recorded.
+float Window::DeltaFrameTime; // The time since the last frame time, from the current frame time.
 
+// Matrix Coordinate Transformation properties.
+glm::mat4 Window::P; // Perspective.
+glm::mat4 Window::V; // View.
+
+// Reference to the main ResourceManager, to get all diferent objects/things in our environment.
 ResourceManager *pManager = nullptr;
 
-/* Create window is called to initialize the window. */
+// Create window is called to initialize the window.
 GLFWwindow* Window::create_window(int width, int height)
 {
 	// Initialize GLFW
@@ -72,21 +76,21 @@ GLFWwindow* Window::create_window(int width, int height)
 	return window;
 }
 
-/* Initialize any objects in the scene here. */
+// Initialize
 void Window::Start()
 {
 	pManager = new ResourceManager();
 	pManager->Load(); // Load from file.
-	if (pManager) { if (pManager->GetCurrentCamera()) V = pManager->GetCurrentCamera()->GetMatrix(); }
+	if (pManager) { if (pManager->GetCurrentCamera()) Window::V = pManager->GetCurrentCamera()->GetMatrix(); }
 }
 
-/* Deconstructor, deletes all initialized objects for a proper cleanup. */
+// Deconstructor, deletes all initialized objects for a proper cleanup.
 void Window::Stop()
 {
 	if (pManager) delete(pManager);
 }
 
-/* Window callback function on a resize. Resets the perspective and view for proper coordinate transformation. */
+// Window callback function on a resize. Resets the perspective for proper coordinate transformation.
 void Window::resize_callback(GLFWwindow* window, int width, int height)
 {
 	// Update width and height
@@ -96,7 +100,8 @@ void Window::resize_callback(GLFWwindow* window, int width, int height)
 	// Set the viewport size
 	glViewport(0, 0, width, height);
 
-	if (height > 0) Window::P = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 1000.0f);
+	if (height > 0) 
+		Window::P = glm::perspective(Window::FieldOfView, (float)width / (float)height, Window::NearPlane, Window::FarPlane);
 
 	// Set the LastPoint to be the center.
 	Window::LastPoint = glm::vec3(float(width / 2), float(height / 2), 0.0f);
@@ -188,11 +193,11 @@ void Window::display_callback(GLFWwindow* window)
 /* Handle Key input. */
 void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	//Define shift keys for capital letters.
+	// Define shift keys for capital letters.
 	int Lshift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
 	int Rshift = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
 
-	//Define movement keys.
+	// Define movement keys.
 	int wKey = glfwGetKey(window, GLFW_KEY_W);
 	int aKey = glfwGetKey(window, GLFW_KEY_A);
 	int sKey = glfwGetKey(window, GLFW_KEY_S);
@@ -200,19 +205,15 @@ void Window::key_callback(GLFWwindow* window, int key, int scancode, int action,
 
 	if (wKey == GLFW_PRESS)
 	{
-		printf("W\n");
 	}
 	if (aKey == GLFW_PRESS)
 	{
-		printf("A\n");
 	}
 	if (sKey == GLFW_PRESS)
 	{
-		printf("S\n");
 	}
 	if (dKey == GLFW_PRESS)
 	{
-		printf("D\n");
 	}
 
 	//Check for a single key press (Not holds)

@@ -179,7 +179,41 @@ void FirstPersonCamera::AdjustYaw(float delta)
 	float yaw = m_Yaw + delta;
 
 	// Adjust the yaw to avoid unwanted errors (limits, etc).
-	if (m_Yaw <= (INITIAL_YAW - 360.0f) || m_Yaw >= (INITIAL_YAW + 360.0f)) m_Yaw = INITIAL_YAW;
+	if (yaw <= (INITIAL_YAW - 360.0f) || yaw >= (INITIAL_YAW + 360.0f)) yaw = INITIAL_YAW;
+
+	// Adjust if we want to lock the position.
+	if (m_LockFieldOfView)
+	{
+		// Lock accordingly.
+		if (yaw <= m_FieldOfViewMinAngle) yaw = m_FieldOfViewMinAngle;
+		if (yaw >= m_FieldOfViewMaxAngle) yaw = m_FieldOfViewMaxAngle;
+	}
 
 	m_Yaw = yaw;
+}
+
+void FirstPersonCamera::LockFieldOfView(glm::vec3 direction, float fov)
+{
+	// First we calculate the angle according to the direction.
+	glm::vec3 forward = glm::vec3(0.0f, 0.0f, -1.0f); // This is assuming default -z direction of view.
+	float angle = glm::dot(glm::normalize(forward), glm::normalize(direction));
+
+	// Get restricted angles.
+	float leftAngle = (INITIAL_YAW + angle) - (fov / 2.0f);
+	float rightAngle = (INITIAL_YAW + angle) + (fov / 2.0f);
+
+	// Update.
+	m_FieldOfViewMinAngle = leftAngle;
+	m_FieldOfViewMaxAngle = rightAngle;
+	m_FieldOfView = fov;
+	m_LockFieldOfView = true;
+}
+
+void FirstPersonCamera::UnlockFieldOfView()
+{
+	// Reset all
+	m_FieldOfViewMinAngle = 0.0f;
+	m_FieldOfViewMaxAngle = 0.0f;
+	m_FieldOfView = 360.0f;
+	m_LockFieldOfView = false;
 }

@@ -11,7 +11,7 @@ public:
 	Skybox(std::vector<const char*> faces);
 	~Skybox();
 
-	void LoadDataIntoBuffers();
+	SETGET(GLuint, CubemapTexture);
 
 	/// <summary>
 	/// Render the geometry object.

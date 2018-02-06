@@ -11,28 +11,31 @@ enum E_MOUSE
 class Window
 {
 private:
+	// Perspective properties.
+	static float FieldOfView;
+	static float NearPlane;
+	static float FarPlane;
 
-public:
-	//Window size properties
+	// Window size properties
 	static int Width;
 	static int Height;
 
-	//Mouse properties
+	// Mouse properties
 	static int Mouse_Status;
 	static glm::vec3 LastPoint;
 	static glm::vec3 CurrPoint;
 
-	//Matrix Coordinate Transformation properties
-	static glm::mat4 P;
-	static glm::mat4 V;
-
-	//Frame Time calculation
+	// Frame Time calculation
 	static float LastFrameTime;
 	static float DeltaFrameTime;
 
+public:
+	// Matrix Coordinate Transformation properties
+	static glm::mat4 P;
+	static glm::mat4 V;
+
 	// Window functions
 	static GLFWwindow* create_window(int width, int height);
-
 	static void Start();
 	static void Stop();
 

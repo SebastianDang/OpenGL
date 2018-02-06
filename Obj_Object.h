@@ -24,7 +24,7 @@ public:
 	~Obj_Object();
 
 	/// <summary>
-	/// Pure virtual function that's inherited in this class.
+	/// Render the obj object.
 	/// </summary>
 	/// <param name="pShaderProgram">Shader to render the object</param>
 	void Render(Shader *pShaderProgram);

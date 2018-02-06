@@ -61,6 +61,13 @@ public:
 class FirstPersonCamera : public Camera
 {
 private:
+
+	// If we want to lock the field of view to a certain angle and direction.
+	bool m_LockFieldOfView = false;
+	float m_FieldOfView = 360.0f;
+	float m_FieldOfViewMinAngle = 0.0f;
+	float m_FieldOfViewMaxAngle = 0.0f;
+
 	void CalculateView();
 
 public:
@@ -69,5 +76,8 @@ public:
 	void Move(glm::vec3 v, glm::vec3 w, float delta = 0.0f);
 	void AdjustPitch(float delta);
 	void AdjustYaw(float delta);
+
+	void LockFieldOfView(glm::vec3 direction, float fov);
+	void UnlockFieldOfView();
 };
 #endif
