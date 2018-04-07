@@ -1,10 +1,22 @@
 #include "stdafx.h"
 #include "Skybox.h"
 
-Skybox::Skybox(std::vector<const char*> faces)
-{
-	ResetToWorld();
+#define SKYBOX_CONSTANT_SIZE 100.0f
 
+Skybox::Skybox(std::vector<const char*> faces)
+	: Geo_Object()
+{
+	// Load the data from the faces we passed in.
+	int success = LoadDataFromFaces(faces);
+	if (success != -1) LoadDataIntoBuffers();
+}
+
+Skybox::~Skybox()
+{
+}
+
+int Skybox::LoadDataFromFaces(std::vector<const char*> faces)
+{
 	// Store all the faces.
 	for (const char *face : faces) m_Faces.push_back(face);
 
@@ -15,19 +27,12 @@ Skybox::Skybox(std::vector<const char*> faces)
 	}
 
 	// Load the data from the cube we created.
-	int success = LoadCube(100.0f);
-	if (success == 0)
-	{
-		LoadDataIntoBuffers();
-	}
-}
-
-Skybox::~Skybox()
-{
+	return LoadDataForCube(SKYBOX_CONSTANT_SIZE);
 }
 
 void Skybox::Render(Shader * pShaderProgram)
 {
+	// If the buffers aren't loaded or the shader program isn't initialized, we don't render.
 	if (!IsInit() || !pShaderProgram) return;
 
 	// Draw skybox.

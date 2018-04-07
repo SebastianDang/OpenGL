@@ -17,19 +17,21 @@ struct S_Container
 };
 
 /// <summary>
-/// Base object class that includes loading from file, geometry, and generates buffers to draw using OpenGL.
+/// Base object class that includes loads data into and generates buffers to draw using OpenGL.
 /// Any class that inherits this, must implement the Render function.
 /// </summary>
 class Object
 {
 private:
+	// Only true once buffers are generated and data is loaded into it.
 	bool m_IsInit = false;
 
 protected:
+
 	// Data
 	std::vector<S_Container> m_Data;
-	std::vector<unsigned int> m_Indices; 
-	
+	std::vector<unsigned int> m_Indices;
+
 	// OpenGL buffers
 	GLuint m_VAO = 0, m_VBO = 0, m_EBO = 0;
 
@@ -57,19 +59,6 @@ public:
 	static GLuint LoadCubemap(std::vector<const char*> faces);
 
 	/// <summary>
-	/// Set to true when the buffers objects are generated and loaded. This means it's ready to 'render'.
-	/// </summary>
-	/// <returns>Returns the Init member variable</returns>
-	bool IsInit() { return m_IsInit; }
-
-	SETGET(glm::mat4, ToWorld);
-
-	/// <summary>
-	/// Resets the model/world matrix to the identity matrix.
-	/// </summary>
-	void ResetToWorld() { m_ToWorld = glm::mat4(1.0f); }
-
-	/// <summary>
 	/// Loads data from scratch, using defined vertices, normals, texCoords, indices. The count is how many to add.
 	/// </summary>
 	/// <param name="vertices">Vertex</param>
@@ -81,18 +70,24 @@ public:
 	int LoadData(const std::vector<glm::vec3> &vertices, const std::vector<glm::vec3> &normals, const std::vector<glm::vec2> &texCoords, const std::vector<unsigned int> &indices, const int &count);
 
 	/// <summary>
-	/// Loads geometry data from file. 
-	/// TODO: Implement this to open multiple obj type files, possibly convert the whole thing to draw meshes instead.
-	/// Possibly use assimp.
-	/// </summary>
-	/// <param name="file"></param>
-	/// <returns></returns>
-	int LoadDataFromFile(const char *file);
-	
-	/// <summary>
 	///  Load geometry data stored, and put it into the VAO, VBO, so that we can render it.
 	/// </summary>
 	void LoadDataIntoBuffers();
+
+	// Setter/Getters for private variables.
+	/// <summary>
+	/// Set to true when the buffers objects are generated and loaded. This means it's ready to 'render'.
+	/// </summary>
+	/// <returns>Returns the Init member variable</returns>
+	bool IsInit() { return m_IsInit; }
+	std::vector<S_Container> GetData() { return m_Data; }
+	std::vector<unsigned int> GetIndices() { return m_Indices; }
+
+	/// <summary>
+	/// Resets the model/world matrix to the identity matrix.
+	/// </summary>
+	void ResetToWorld() { m_ToWorld = glm::mat4(1.0f); }
+	SETGET(glm::mat4, ToWorld);
 
 	/// <summary>
 	/// Translate the object. 

@@ -23,6 +23,19 @@ public:
 	/// </summary>
 	~Obj_Object();
 
+	// Setter/Getters for private variables.
+	SETGET(std::string, Path);
+	SETGET(std::string, File);
+
+	/// <summary>
+	/// Loads geometry data from file. 
+	/// TODO: Implement this to open multiple obj type files, possibly convert the whole thing to draw meshes instead.
+	/// Possibly use assimp.
+	/// </summary>
+	/// <param name="filepath"></param>
+	/// <returns></returns>
+	int LoadDataFromFile(const char *filepath);
+
 	/// <summary>
 	/// Render the obj object.
 	/// </summary>

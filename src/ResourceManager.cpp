@@ -74,6 +74,14 @@ void ResourceManager::Load(const char * pFile)
 	m_Cameras.push_back(pFirstCamera);
 	SetCurrentCamera(1); // Set the current one that we use.
 
+	// Load materials and objects
+	Material *pMat = new Material();
+	pMat->SetAmbient(glm::vec3(0.24725f, 0.2245f, 0.0645f));
+	pMat->SetDiffuse(glm::vec3(0.34615f, 0.3143f, 0.0903f));
+	pMat->SetSpecular(glm::vec3(0.797357f, 0.723991f, 0.208006f));
+	pMat->SetShininess(83.2f);
+	AddMaterial("default", pMat);
+
 	// Load all the skybox faces.
 	std::vector<const char *> faces;
 	faces.push_back("assets/skybox/right.ppm");
@@ -84,35 +92,31 @@ void ResourceManager::Load(const char * pFile)
 	faces.push_back("assets/skybox/front.ppm");
 	Skybox *pSky = new Skybox(faces);
 	AddObject(pSky);
-
-	// Load materials and objects
-	Material *mat = new Material();
-	mat->SetAmbient(glm::vec3(0.24725f, 0.2245f, 0.0645f));
-	mat->SetDiffuse(glm::vec3(0.34615f, 0.3143f, 0.0903f));
-	mat->SetSpecular(glm::vec3(0.797357f, 0.723991f, 0.208006f));
-	mat->SetShininess(83.2f);
-	AddMaterial("default", mat);
 	
-	Obj_Object *Obj = new Obj_Object("./assets/obj/pod.obj");
-	Geo_Object *Geo = new Geo_Object();
-	Geo->LoadSphereIntoBuffer(1.0f, 20, 20);
+	Obj_Object *pObj = new Obj_Object("./assets/obj/pod.obj");
+	AddLoadedObject("obj", pObj);
 
-	AddLoadedObject("obj", Obj);
-	AddLoadedObject("geo", Geo);
+	Geo_Object *pGeo = new Geo_Object(1.0f, 20, 20);
+	AddLoadedObject("geo", pGeo);
 
-	// Create instances
+	// Create obj instance.
+	Instance_Object *pObjInstance = new Instance_Object(*pObj);
+	pObjInstance->SetMaterial(*pMat);
+	AddObject(pObjInstance);
+
+	// Create geometry instances
 	int num_instances = 10;
 	float num_instancesf = float(num_instances);
 	for (int i = 0; i <= num_instances; i++)
 	{
-		Instance_Object *pInstance = new Instance_Object(*Geo);
-		pInstance->SetMaterial(*mat);
+		Instance_Object *pGeoInstance = new Instance_Object(*pGeo);
+		pGeoInstance->SetMaterial(*pMat);
 		float radius = num_instancesf / 2.0f;
 		float x = glm::cos(360.0f / num_instancesf * (float)i) * radius;
 		float y = 0.0f;
 		float z = glm::sin(360.0f / num_instancesf * (float)i) * radius;
-		pInstance->Translate(glm::vec3(x, y, z));
-		AddObject(pInstance);
+		pGeoInstance->Translate(glm::vec3(x, y, z));
+		AddObject(pGeoInstance);
 	}
 }
 

@@ -3,13 +3,13 @@
 
 
 Instance_Object::Instance_Object()
+	: Object()
 {
-	ResetToWorld();
 }
 
 Instance_Object::Instance_Object(Object & obj)
+	: Object()
 {
-	Instance_Object();
 	SetObject(obj);
 }
 
@@ -31,6 +31,7 @@ void Instance_Object::Render(Shader * pShaderProgram)
 {
 	if (m_pMaterial) 
 		m_pMaterial->UpdateShader(pShaderProgram);
+
 	if (m_pObject)
 	{
 		m_pObject->SetToWorld(m_ToWorld);

@@ -2,8 +2,22 @@
 #include "Geo_Object.h"
 
 Geo_Object::Geo_Object()
+	: Object()
 {
-	ResetToWorld();
+}
+
+Geo_Object::Geo_Object(float size)
+{
+	// Load the data for a cube.
+	int success = LoadDataForCube(size);
+	if (success != -1) LoadDataIntoBuffers();
+}
+
+Geo_Object::Geo_Object(float radius, int slices, int stacks)
+{
+	// Load the data for a sphere.
+	int success = LoadDataForSphere(radius, slices, stacks);
+	if (success != -1) LoadDataIntoBuffers();
 }
 
 Geo_Object::~Geo_Object()
@@ -11,7 +25,7 @@ Geo_Object::~Geo_Object()
 	// The buffer objects are cleared in the base class. Delete anything else created here.
 }
 
-int Geo_Object::LoadCube(float size)
+int Geo_Object::LoadDataForCube(float size)
 {
 	GLfloat vertices_array[] =
 	{
@@ -69,13 +83,7 @@ int Geo_Object::LoadCube(float size)
 	return LoadData(vertices, normals, texCoords, indices, 24);
 }
 
-void Geo_Object::LoadCubeIntoBuffer(float size)
-{
-	int success = LoadCube(size);
-	if (success != -1) LoadDataIntoBuffers();
-}
-
-int Geo_Object::LoadSphere(float radius, int slices, int stacks)
+int Geo_Object::LoadDataForSphere(float radius, int slices, int stacks)
 {
 	float fslices = (float)slices;
 	float fstacks = (float)stacks;
@@ -150,14 +158,9 @@ int Geo_Object::LoadSphere(float radius, int slices, int stacks)
 	return LoadData(vertices, normals, std::vector<glm::vec2>(), std::vector<unsigned int>(), (int)vertices.size());
 }
 
-void Geo_Object::LoadSphereIntoBuffer(float radius, int slices, int stacks)
-{
-	int success = LoadSphere(radius, slices, stacks);
-	if (success != -1) LoadDataIntoBuffers();
-}
-
 void Geo_Object::Render(Shader * pShaderProgram)
 {
+	// If the buffers aren't loaded or the shader program isn't initialized, we don't render.
 	if (!IsInit() || !pShaderProgram) return;
 
 	// Update any variables that are with this object.

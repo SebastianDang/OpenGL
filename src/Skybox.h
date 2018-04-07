@@ -11,6 +11,9 @@ public:
 	Skybox(std::vector<const char*> faces);
 	~Skybox();
 
+	int LoadDataFromFaces(std::vector<const char*> faces);
+
+	// Setter/Getters for private variables.
 	SETGET(GLuint, CubemapTexture);
 
 	/// <summary>
