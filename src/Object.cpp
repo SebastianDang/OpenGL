@@ -4,6 +4,7 @@
 Object::Object()
 {
 	ResetToWorld();
+	ResetData();
 }
 
 Object::~Object()
@@ -67,7 +68,7 @@ GLuint Object::LoadCubemap(std::vector<const char*> faces)
 	GLuint textureID;
 
 	// Define variables to hold height map's width, height, pixel information.
-	int width, height;
+	int width = 0, height = 0;
 	unsigned char * image;
 
 	// Create ID for texture.
@@ -115,6 +116,12 @@ GLuint Object::LoadCubemap(std::vector<const char*> faces)
 
 	// Return the textureID, we need to keep track of this texture variable.
 	return textureID;
+}
+
+void Object::ResetData()
+{
+	m_Data.clear(); 
+	m_Indices.clear(); 
 }
 
 int Object::LoadData(const std::vector<glm::vec3> &vertices, const std::vector<glm::vec3> &normals, const std::vector<glm::vec2> &texCoords, const std::vector<unsigned int> &indices, const int &count)
@@ -182,6 +189,11 @@ void Object::LoadDataIntoBuffers()
 
 	// Data is loaded, buffers are populated, so we can render now.
 	m_IsInit = true;
+}
+
+void Object::ResetToWorld()
+{
+	m_ToWorld = glm::mat4(1.0f); // Identity matrix
 }
 
 void Object::Translate(const glm::vec3 &value)

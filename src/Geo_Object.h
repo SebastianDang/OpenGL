@@ -13,9 +13,14 @@ enum E_GeometryType
 class Geo_Object : public Object
 {
 private:
+
 	int m_Type = -1;
 
 public:
+
+	/// <summary>
+	/// Create objects based on specific geometry types
+	/// </summary>
 	Geo_Object();
 	Geo_Object(float size);
 	Geo_Object(float radius, int slices, int stacks);
@@ -41,6 +46,6 @@ public:
 	/// Render the geometry object.
 	/// </summary>
 	/// <param name="pShaderProgram">Shader to render the object</param>
-	void Render(Shader *pShaderProgram);
+	void Render(Shader* pShaderProgram);
 };
 

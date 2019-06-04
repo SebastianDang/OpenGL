@@ -1,13 +1,10 @@
 #pragma once
-
-#ifndef LIGHT_H
-#define LIGHT_H
-
 #include "Shader.h"
 
 class Light
 {
 protected:
+
 	bool m_Enabled;
 	glm::vec3 m_Position;
 	glm::vec3 m_Ambient;
@@ -15,58 +12,87 @@ protected:
 	glm::vec3 m_Specular;
 
 public:
+
+	Light()
+		:
+		m_Enabled(false),
+		m_Position(1.0f),
+		m_Ambient(1.0f),
+		m_Diffuse(1.0f),
+		m_Specular(1.0f)
+	{}
+
 	SETGET(bool, Enabled);
 	SETGET(glm::vec3, Position);
 	SETGET(glm::vec3, Ambient);
 	SETGET(glm::vec3, Diffuse);
 	SETGET(glm::vec3, Specular);
 
-	virtual void UpdateShader(Shader *pShaderProgram) = 0;
+	virtual void UpdateShader(Shader* pShaderProgram) = 0;
 };
 
 class DirectionalLight : public Light
 {
 private:
+
 	glm::vec3 m_Direction;
 
 public:
-	DirectionalLight() {}
+
+	DirectionalLight()
+		:
+		Light(),
+		m_Direction(1.0f)
+	{}
 
 	SETGET(glm::vec3, Direction);
 
-	void UpdateShader(Shader *pShaderProgram);
+	void UpdateShader(Shader* pShaderProgram);
 };
 
 class PointLight : public Light
 {
 private:
+
 	float m_Quadratic;
 
 public:
-	PointLight() {}
+
+	PointLight()
+		:
+		Light(),
+		m_Quadratic(1.0f)
+	{}
 
 	SETGET(float, Quadratic);
 
-	void UpdateShader(Shader *pShaderProgram);
+	void UpdateShader(Shader* pShaderProgram);
 };
 
 class SpotLight : public Light
 {
 private:
+
 	glm::vec3 m_Direction;
 	float m_Quadratic;
 	float m_SpotCutoff;
 	float m_SpotExponent;
 
 public:
-	SpotLight() {}
+
+	SpotLight()
+		:
+		Light(),
+		m_Direction(1.0f),
+		m_Quadratic(1.0f),
+		m_SpotCutoff(1.0f),
+		m_SpotExponent(1.0f)
+	{}
 
 	SETGET(glm::vec3, Direction);
 	SETGET(float, Quadratic);
 	SETGET(float, SpotCutoff);
 	SETGET(float, SpotExponent);
 
-	void UpdateShader(Shader *pShaderProgram);
+	void UpdateShader(Shader* pShaderProgram);
 };
-
-#endif

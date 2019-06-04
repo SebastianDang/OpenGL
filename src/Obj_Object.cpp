@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Obj_Object.h"
 
-Obj_Object::Obj_Object(const char * filepath)
+Obj_Object::Obj_Object(const char* filepath)
 	: Object()
 {
 	// Load the data from the filepath specified
@@ -14,7 +14,7 @@ Obj_Object::~Obj_Object()
 	// The buffer objects are cleared in the base class. Delete anything else created here.
 }
 
-int Obj_Object::LoadDataFromFile(const char * filepath)
+int Obj_Object::LoadDataFromFile(const char* filepath)
 {
 	// Break up the filepath, so we can store it for later.
 	std::string fullPath = std::string(filepath);
@@ -34,10 +34,11 @@ int Obj_Object::LoadDataFromFile(const char * filepath)
 	float avg_X = 0.0f, avg_Y = 0.0f, avg_Z = 0.0f, scale_v = -INFINITY;
 
 	// Open the file for reading called objFile.
-	std::FILE * objFile = fopen(filepath, "r");
+	std::FILE* objFile = fopen(filepath, "r");
 
 	// If the file is unable to open return -1: fail.
-	if (objFile == NULL) {
+	if (!objFile)
+	{
 		printf("Unable to read file: %s\n", filepath);
 		return -1;
 	}
@@ -47,52 +48,63 @@ int Obj_Object::LoadDataFromFile(const char * filepath)
 	std::vector<unsigned int> indices;
 
 	// Read the file until the end. "# are commments to be ignored".
-	while (1) {
+	while (1) 
+	{
 		char buf[BUFSIZ];
 		int check = fscanf(objFile, "%s", buf);
 		if (check == EOF) break;
 
 		// Read in lines that start with "v". Add into vertices.
-		if (strcmp(buf, "v") == 0) {
+		if (strcmp(buf, "v") == 0)
+		{
 			glm::vec3 vertex;
-			fscanf(objFile, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-			vertices.push_back(vertex);
+			if (fscanf(objFile, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z) >= 3)
+			{
+				vertices.push_back(vertex);
 
-			// Calculate min, max for x, y, z.
-			if (vertex.x < min_X) { min_X = vertex.x; }
-			if (vertex.y < min_Y) { min_Y = vertex.y; }
-			if (vertex.z < min_Z) { min_Z = vertex.z; }
-			if (vertex.x > max_X) { max_X = vertex.x; }
-			if (vertex.y > max_Y) { max_Y = vertex.y; }
-			if (vertex.z > max_Z) { max_Z = vertex.z; }
+				// Calculate min, max for x, y, z.
+				if (vertex.x < min_X) { min_X = vertex.x; }
+				if (vertex.y < min_Y) { min_Y = vertex.y; }
+				if (vertex.z < min_Z) { min_Z = vertex.z; }
+				if (vertex.x > max_X) { max_X = vertex.x; }
+				if (vertex.y > max_Y) { max_Y = vertex.y; }
+				if (vertex.z > max_Z) { max_Z = vertex.z; }
+			}
 			continue;
 		}
 
 		// Read in lines that start with "vn". Add into normals.
-		if (strcmp(buf, "vn") == 0) {
+		if (strcmp(buf, "vn") == 0) 
+		{
 			glm::vec3 normal;
-			fscanf(objFile, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
-			normals.push_back(normal);
+			if (fscanf(objFile, "%f %f %f\n", &normal.x, &normal.y, &normal.z) >= 3)
+			{
+				normals.push_back(normal);
+			}
 			continue;
 		}
 
 		// Read in lines that start with "vt". Add into textures.
-		if (strcmp(buf, "vt") == 0) {
+		if (strcmp(buf, "vt") == 0) 
+		{
 			glm::vec2 texCoord;
-			fscanf(objFile, "%f %f\n", &texCoord.x, &texCoord.y);
-			texCoords.push_back(texCoord);
+			if (fscanf(objFile, "%f %f\n", &texCoord.x, &texCoord.y) >= 2)
+			{
+				texCoords.push_back(texCoord);
+			}
 			continue;
 		}
 
 		// Read in lines that start with "f". Add into indices.
 		if (strcmp(buf, "f") == 0) {//Note: Read only left or right side since they are identical on both sides.
-			unsigned int faces_v[3], faces_vn[3];
-			fscanf(objFile, "%d//%d %d//%d %d//%d\n", &faces_v[0], &faces_vn[0], &faces_v[1], &faces_vn[1], &faces_v[2], &faces_vn[2]);
-			//unsigned int faces_v[3], faces_vn[3], faces_vt[3];
-			//fscanf(objFile, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &faces_v[0], &faces_vt[0], &faces_vn[0], &faces_v[1], &faces_vt[1], &faces_vn[1], &faces_v[2], &faces_vt[2], &faces_vn[2]);
-			indices.push_back(faces_v[0] - 1);
-			indices.push_back(faces_v[1] - 1);
-			indices.push_back(faces_v[2] - 1);
+			unsigned int faces_v[3], faces_vn[3]; //faces_vt[3];
+			//if (fscanf(objFile, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &faces_v[0], &faces_vt[0], &faces_vn[0], &faces_v[1], &faces_vt[1], &faces_vn[1], &faces_v[2], &faces_vt[2], &faces_vn[2]) >= 9)
+			if (fscanf(objFile, "%d//%d %d//%d %d//%d\n", &faces_v[0], &faces_vn[0], &faces_v[1], &faces_vn[1], &faces_v[2], &faces_vn[2]) >= 6)
+			{
+				indices.push_back(faces_v[0] - 1);
+				indices.push_back(faces_v[1] - 1);
+				indices.push_back(faces_v[2] - 1);
+			}
 			continue;
 		}
 	}
@@ -124,7 +136,7 @@ int Obj_Object::LoadDataFromFile(const char * filepath)
 	return LoadData(vertices, normals, texCoords, indices, (int)vertices.size());
 }
 
-void Obj_Object::Render(Shader *pShaderProgram)
+void Obj_Object::Render(Shader * pShaderProgram)
 {
 	// If the buffers aren't loaded or the shader program isn't initialized, we don't render.
 	if (!IsInit() || !pShaderProgram) return;
@@ -139,9 +151,11 @@ void Obj_Object::Render(Shader *pShaderProgram)
 	int DataCount = (int)m_Data.size();
 	int IndicesCount = (int)m_Indices.size();
 
+	// Draw in the order data is defined. This is faster if data is chosen carefully.
 	if (DataCount > 0 && IndicesCount <= 0)
 		glDrawArrays(GL_TRIANGLES, 0, DataCount);
 
+	// Draw in the order indices are defined.
 	else if (DataCount > 0 && IndicesCount > 0)
 		glDrawElements(GL_TRIANGLES, (GLsizei)IndicesCount, GL_UNSIGNED_INT, 0);
 

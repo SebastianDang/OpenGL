@@ -1,5 +1,4 @@
-#ifndef SHADER_HPP
-#define SHADER_HPP
+#pragma once
 
 class Shader
 {
@@ -26,5 +25,3 @@ public:
 	void Set(const char *name, const glm::vec4 &value) const;						// Vec4f
 	void Set(const char *name, const glm::mat4 &matrix) const;						// Mat4
 };
-
-#endif

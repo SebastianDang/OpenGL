@@ -17,12 +17,13 @@ struct S_Container
 };
 
 /// <summary>
-/// Base object class that includes loads data into and generates buffers to draw using OpenGL.
+/// Base object class that loads data into and generates buffers to draw using OpenGL.
 /// Any class that inherits this, must implement the Render function.
 /// </summary>
 class Object
 {
 private:
+
 	// Only true once buffers are generated and data is loaded into it.
 	bool m_IsInit = false;
 
@@ -39,6 +40,7 @@ protected:
 	glm::mat4 m_ToWorld = glm::mat4(1.0f);
 
 public:
+
 	Object();
 	~Object();
 
@@ -59,6 +61,11 @@ public:
 	static GLuint LoadCubemap(std::vector<const char*> faces);
 
 	/// <summary>
+	///	Resets data and indices.
+	/// </summary>
+	void ResetData();
+
+	/// <summary>
 	/// Loads data from scratch, using defined vertices, normals, texCoords, indices. The count is how many to add.
 	/// </summary>
 	/// <param name="vertices">Vertex</param>
@@ -67,7 +74,7 @@ public:
 	/// <param name="indices">Order of drawing, if we want to use glDrawElements, if not, then glDrawArrays will be used.</param>
 	/// <param name="count">Number of elements to load into the object.</param>
 	/// <returns></returns>
-	int LoadData(const std::vector<glm::vec3> &vertices, const std::vector<glm::vec3> &normals, const std::vector<glm::vec2> &texCoords, const std::vector<unsigned int> &indices, const int &count);
+	int LoadData(const std::vector<glm::vec3>& vertices, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texCoords, const std::vector<unsigned int>& indices, const int& count);
 
 	/// <summary>
 	///  Load geometry data stored, and put it into the VAO, VBO, so that we can render it.
@@ -86,7 +93,7 @@ public:
 	/// <summary>
 	/// Resets the model/world matrix to the identity matrix.
 	/// </summary>
-	void ResetToWorld() { m_ToWorld = glm::mat4(1.0f); }
+	void ResetToWorld();
 	SETGET(glm::mat4, ToWorld);
 
 	/// <summary>
@@ -94,32 +101,32 @@ public:
 	/// Stacks the current transform onto the current model/world matrix.
 	/// </summary>
 	/// <param name="translation">Displacement vector</param>
-	void Translate(const glm::vec3 &value);
-	
+	void Translate(const glm::vec3& value);
+
 	/// <summary>
 	/// Rotate the object around an arbitrary axis, in degrees.  
 	/// Stacks the current transform onto the current model/world matrix.
 	/// </summary>
 	/// <param name="degree">Degree of rotation</param>
 	/// <param name="axis">Axis of rotation</param>
-	void Rotate(const float degree, const glm::vec3 &axis);
+	void Rotate(const float degree, const glm::vec3& axis);
 
 	/// <summary>
 	/// Scale the object, either uniformly, or non-uniformly.
 	/// Stacks the current transform onto the current model/world matrix.
 	/// </summary>
 	/// <param name="value">Vector to apply scaling to.</param>
-	void Scale(const glm::vec3 &value);
+	void Scale(const glm::vec3& value);
 
 	/// <summary>
 	/// Sets the position to a fixed value.
 	/// </summary>
 	/// <param name="value"></param>
-	void SetPosition(const glm::vec3 &value);
-	
+	void SetPosition(const glm::vec3& value);
+
 	/// <summary>
 	/// Render that has to be implemented in any inherited class.
 	/// </summary>
 	/// <param name="pShaderProgram">Shader that's used for this object</param>
-	virtual void Render(Shader *pShaderProgram) = 0;
+	virtual void Render(Shader* pShaderProgram) = 0;
 };

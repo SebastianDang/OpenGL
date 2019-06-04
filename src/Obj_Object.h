@@ -7,6 +7,7 @@
 class Obj_Object : public Object
 {
 private:
+
 	std::string m_Path;
 	std::string m_File;
 
@@ -16,7 +17,7 @@ public:
 	/// Constructor that loads from the filepath and sets path, file member variables.
 	/// </summary>
 	/// <param name="filepath">Relative filepath</param>
-	Obj_Object(const char *filepath);
+	Obj_Object(const char* filepath);
 
 	/// <summary>
 	/// Destructor that also calls the base class destructor.
@@ -34,12 +35,12 @@ public:
 	/// </summary>
 	/// <param name="filepath"></param>
 	/// <returns></returns>
-	int LoadDataFromFile(const char *filepath);
+	int LoadDataFromFile(const char* filepath);
 
 	/// <summary>
 	/// Render the obj object.
 	/// </summary>
 	/// <param name="pShaderProgram">Shader to render the object</param>
-	void Render(Shader *pShaderProgram);
+	void Render(Shader* pShaderProgram);
 };
 

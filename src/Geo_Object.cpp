@@ -30,16 +30,16 @@ int Geo_Object::LoadDataForCube(float size)
 	GLfloat vertices_array[] =
 	{
 		// Front vertices
-		-1.0f, -1.0f,  1.0f, // bottom left
-		1.0f, -1.0f,  1.0f,
-		1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f, // top left
+		-size, -size,  size, // bottom left
+		size, -size,  size,
+		size,  size,  size,
+		-size,  size,  size, // top left
 
 		// Back vertices
-		-1.0f, -1.0f, -1.0f, // bottom left
-		1.0f, -1.0f, -1.0f,
-		1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f // top left
+		-size, -size, -size, // bottom left
+		size, -size, -size,
+		size,  size, -size,
+		-size,  size, -size // top left
 	};
 
 	GLuint indices_array[] =
@@ -96,61 +96,65 @@ int Geo_Object::LoadDataForSphere(float radius, int slices, int stacks)
 		{
 			// Top left
 			vertices.push_back(glm::vec3(
-				radius * -cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices),
-				radius * -cos(glm::pi<float>() * (j + 1.0f) / fslices),
-				radius * sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices)));
+				radius * -cosf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * -cosf(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * sinf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices)));
 			normals.push_back(glm::normalize(glm::vec3(
-				-cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices),
-				-cos(glm::pi<float>() * (j + 1.0f) / fslices),
-				sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices))));
+				-cosf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices),
+				-cosf(glm::pi<float>() * (j + 1.0f) / fslices),
+				sinf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices))));
+
 			// Top right
 			vertices.push_back(glm::vec3(
-				radius * -cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * (j + 1.0) / fslices),
-				radius * -cos(glm::pi<float>() * (j + 1.0) / fslices),
-				radius * sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * (j + 1.0) / fslices)));
+				radius * -cosf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * -cosf(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * sinf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices)));
 			normals.push_back(glm::normalize(glm::vec3(
-				-cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * (j + 1.0) / fslices),
-				-cos(glm::pi<float>() * (j + 1.0) / fslices),
-				sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * (j + 1.0) / fslices))));
+				-cosf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices),
+				-cosf(glm::pi<float>() * (j + 1.0f) / fslices),
+				sinf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices))));
+
 			// Bottom right
 			vertices.push_back(glm::vec3(
-				radius * -cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices),
-				radius * -cos(glm::pi<float>() * j / fslices),
-				radius * sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices)));
+				radius * -cosf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * j / fslices),
+				radius * -cosf(glm::pi<float>() * j / fslices),
+				radius * sinf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * j / fslices)));
 			normals.push_back(glm::normalize(glm::vec3(
-				-cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices),
-				-cos(glm::pi<float>() * j / fslices),
-				sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices))));
+				-cosf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * j / fslices),
+				-cosf(glm::pi<float>() * j / fslices),
+				sinf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * j / fslices))));
 
 			// Need to repeat 2 of the vertices since we can only draw triangles. Eliminates the confusion
 			// of array indices.
 			// Top left
 			vertices.push_back(glm::vec3(
-				radius * -cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices),
-				radius * -cos(glm::pi<float>() * (j + 1.0f) / fslices),
-				radius * sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices)));
+				radius * -cosf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * -cosf(glm::pi<float>() * (j + 1.0f) / fslices),
+				radius * sinf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices)));
 			normals.push_back(glm::normalize(glm::vec3(
-				-cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices),
-				-cos(glm::pi<float>() * (j + 1.0f) / fslices),
-				sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * (j + 1.0f) / fslices))));
+				-cosf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices),
+				-cosf(glm::pi<float>() * (j + 1.0f) / fslices),
+				sinf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * (j + 1.0f) / fslices))));
+
 			// Bottom right
 			vertices.push_back(glm::vec3(
-				radius * -cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices),
-				radius * -cos(glm::pi<float>() * j / fslices),
-				radius * sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices)));
+				radius * -cosf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * j / fslices),
+				radius * -cosf(glm::pi<float>() * j / fslices),
+				radius * sinf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * j / fslices)));
 			normals.push_back(glm::normalize(glm::vec3(
-				-cos(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices),
-				-cos(glm::pi<float>() * j / fslices),
-				sin(2.0f * glm::pi<float>() * (i + 1.0) / fstacks) * sin(glm::pi<float>() * j / fslices))));
+				-cosf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * j / fslices),
+				-cosf(glm::pi<float>() * j / fslices),
+				sinf(2.0f * glm::pi<float>() * (i + 1.0f) / fstacks) * sinf(glm::pi<float>() * j / fslices))));
+
 			// Bottom left
 			vertices.push_back(glm::vec3(
-				radius * -cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * j / fslices),
-				radius * -cos(glm::pi<float>() * j / fslices),
-				radius * sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * j / fslices)));
+				radius * -cosf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * j / fslices),
+				radius * -cosf(glm::pi<float>() * j / fslices),
+				radius * sinf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * j / fslices)));
 			normals.push_back(glm::normalize(glm::vec3(
-				-cos(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * j / fslices),
-				-cos(glm::pi<float>() * j / fslices),
-				sin(2.0f * glm::pi<float>() * i / fstacks) * sin(glm::pi<float>() * j / fslices))));
+				-cosf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * j / fslices),
+				-cosf(glm::pi<float>() * j / fslices),
+				sinf(2.0f * glm::pi<float>() * i / fstacks) * sinf(glm::pi<float>() * j / fslices))));
 		}
 	}
 
@@ -173,9 +177,11 @@ void Geo_Object::Render(Shader * pShaderProgram)
 	int DataCount = (int)m_Data.size();
 	int IndicesCount = (int)m_Indices.size();
 
+	// Draw in the order data is defined. This is faster if data is chosen carefully.
 	if (DataCount > 0 && IndicesCount <= 0)
 		glDrawArrays(GL_TRIANGLES, 0, DataCount);
 
+	// Draw in the order indices are defined.
 	else if (DataCount > 0 && IndicesCount > 0)
 		glDrawElements(GL_TRIANGLES, (GLsizei)IndicesCount, GL_UNSIGNED_INT, 0);
 

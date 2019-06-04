@@ -97,7 +97,7 @@ int main(void)
 	// Initialize objects/pointers for rendering
 	Window::Start(); // This is a call in window which intiializes everything else.
 
-					 // Loop while GLFW window should stay open
+	// Loop while GLFW window should stay open
 	while (!glfwWindowShouldClose(pWindow))
 	{
 		// Main render display callback. Rendering of objects is done here.

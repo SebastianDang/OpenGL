@@ -4,10 +4,12 @@
 class Skybox : public Geo_Object
 {
 private:
+
 	std::vector<const char *> m_Faces;
 	GLuint m_CubemapTexture;
 
 public:
+
 	Skybox(std::vector<const char*> faces);
 	~Skybox();
 

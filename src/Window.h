@@ -1,5 +1,4 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 enum E_MOUSE
 {
@@ -11,6 +10,7 @@ enum E_MOUSE
 class Window
 {
 private:
+
 	// Perspective properties.
 	static float FieldOfView;
 	static float NearPlane;
@@ -30,6 +30,7 @@ private:
 	static float DeltaFrameTime;
 
 public:
+
 	// Matrix Coordinate Transformation properties
 	static glm::mat4 P;
 	static glm::mat4 V;
@@ -51,5 +52,3 @@ public:
 	static void cursor_button_callback(GLFWwindow* window, int button, int action, int mods);
 	static void cursor_scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 };
-
-#endif

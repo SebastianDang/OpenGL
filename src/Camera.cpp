@@ -31,14 +31,16 @@ glm::mat4 Camera::GetMatrix()
 	return glm::lookAt(m_Position, m_Lookat, m_Up);
 }
 
-void Camera::Translate(glm::vec3 DeltaFrameTime)
+void Camera::Translate(glm::vec3 value)
 {
-	// TODO: Implement
+	m_Position += value;
+	Update(m_Position, m_Lookat, m_Up);
 }
 
 void Camera::Rotate(glm::vec3 axis, float angle)
 {
 	// TODO: Implement
+	Update(m_Position, m_Lookat, m_Up);
 }
 
 void Camera::Invert(float distance)

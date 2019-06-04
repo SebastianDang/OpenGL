@@ -1,12 +1,10 @@
 #pragma once
 
-#ifndef CAMERA_H
-#define CAMERA_H
-
 class Camera 
 {
 
 protected:
+
 	glm::vec3 m_Position;
 	glm::vec3 m_Lookat;
 	glm::vec3 m_Up;
@@ -19,6 +17,7 @@ protected:
 	GLfloat m_Roll = 0.0f;
 
 public:
+
 	Camera() {}
 	virtual ~Camera() {}
 	Camera(glm::vec3 e, glm::vec3 d, glm::vec3 up);
@@ -28,7 +27,7 @@ public:
 
 	glm::mat4 GetMatrix();
 
-	void Translate(glm::vec3 DeltaFrameTime);
+	void Translate(glm::vec3 value);
 	void Rotate(glm::vec3 axis, float angle);
 	void Invert(float distance); // Positive to invert, negative to revert back.
 };
@@ -42,9 +41,11 @@ public:
 class ThirdPersonCamera : public Camera
 {
 private:
+
 	glm::vec3 m_FollowPoint;
 
 public:
+
 	ThirdPersonCamera(glm::vec3 follow);
 
 	SETGET(glm::vec3, FollowPoint);
@@ -71,6 +72,7 @@ private:
 	void CalculateView();
 
 public:
+
 	FirstPersonCamera(glm::vec3 e);
 
 	void Move(glm::vec3 v, glm::vec3 w, float delta = 0.0f);
@@ -80,4 +82,3 @@ public:
 	void LockFieldOfView(glm::vec3 direction, float fov);
 	void UnlockFieldOfView();
 };
-#endif

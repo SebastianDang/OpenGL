@@ -15,7 +15,25 @@ void ResourceManager::Load(const char * pFile)
 	// Attempt to load from file here.
 	if (pFile)
 	{
+		// Open the file for reading.
+		std::FILE* objFile = fopen(pFile, "r");
+		if (objFile)
+		{
+			// Read the file until the end. "# are commments to be ignored".
+			while (1)
+			{
+				char buf[BUFSIZ];
+				int check = fscanf(objFile, "%s", buf);
+				if (check == EOF) break;
 
+				// Shaders
+				if (strcmp(buf, "shader") == 0)
+				{
+
+				}
+
+			}
+		}
 		return;
 	}
 
@@ -53,9 +71,9 @@ void ResourceManager::Load(const char * pFile)
 	pSpot->SetSpotExponent(1.0f);
 
 	// Add to lights
-	m_Lights.push_back(pDirectional);
-	m_Lights.push_back(pPoint);
-	m_Lights.push_back(pSpot);
+	AddLight(pDirectional);
+	AddLight(pPoint);
+	AddLight(pSpot);
 
 	// Initialize the camera
 	glm::vec3 camera_pos = glm::vec3(0.0f, 0.0f, 20.0f);
@@ -69,12 +87,12 @@ void ResourceManager::Load(const char * pFile)
 	pFirstCamera->LockFieldOfView(direction, 180.0f);
 
 	// Add to cameras.
-	m_Cameras.push_back(pDefaultCamera);
-	m_Cameras.push_back(pThirdCamera);
-	m_Cameras.push_back(pFirstCamera);
+	AddCamera(pDefaultCamera);
+	AddCamera(pThirdCamera);
+	AddCamera(pFirstCamera);
 	SetCurrentCamera(1); // Set the current one that we use.
 
-	// Load materials and objects
+	// Load materials and objects.
 	Material *pMat = new Material();
 	pMat->SetAmbient(glm::vec3(0.24725f, 0.2245f, 0.0645f));
 	pMat->SetDiffuse(glm::vec3(0.34615f, 0.3143f, 0.0903f));
@@ -90,12 +108,17 @@ void ResourceManager::Load(const char * pFile)
 	faces.push_back("assets/skybox/bottom.ppm");
 	faces.push_back("assets/skybox/back.ppm");
 	faces.push_back("assets/skybox/front.ppm");
+
+	// Create skybox.
 	Skybox *pSky = new Skybox(faces);
-	AddObject(pSky);
+	AddLoadedObject("skybox", pSky);
+	AddObject(pSky); // Only one
 	
+	// Create obj file obj.
 	Obj_Object *pObj = new Obj_Object("./assets/obj/pod.obj");
 	AddLoadedObject("obj", pObj);
 
+	// Create geo obj.
 	Geo_Object *pGeo = new Geo_Object(1.0f, 20, 20);
 	AddLoadedObject("geo", pGeo);
 
@@ -118,6 +141,14 @@ void ResourceManager::Load(const char * pFile)
 		pGeoInstance->Translate(glm::vec3(x, y, z));
 		AddObject(pGeoInstance);
 	}
+
+	// Add Terrain
+	Terrain *pTerrain = new Terrain();
+	pTerrain->LoadDataFromSimpleGrid(10.0f, 10.0f, 0.0f, 100);
+	pTerrain->SmoothUsingDiamondSquare(0, pTerrain->GetNumVertices()-1, 0, pTerrain->GetNumVertices()-1, (int)glm::pow(2, 1), 5.0f, 0.01f);
+	pTerrain->LoadDataIntoBuffers();
+	AddLoadedObject("terrain", pTerrain);
+	AddObject(pTerrain);
 }
 
 void ResourceManager::Save()

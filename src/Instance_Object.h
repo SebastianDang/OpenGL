@@ -13,6 +13,7 @@ private:
 	Material *m_pMaterial = nullptr;
 
 public:
+
 	Instance_Object();
 	~Instance_Object();
 
