@@ -81,7 +81,7 @@ GLFWwindow* Window::create_window(int width, int height)
 void Window::Start()
 {
 	pManager = new ResourceManager();
-	pManager->Load(); // Load from file.
+	pManager->Load("assets/config/config.json"); // Load from file.
 	if (pManager) { if (pManager->GetCurrentCamera()) Window::V = pManager->GetCurrentCamera()->GetMatrix(); }
 }
 

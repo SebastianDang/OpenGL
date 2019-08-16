@@ -17,8 +17,10 @@
 #include <GLFW/glfw3.h>
 
 // GLM libraries
+#pragma warning(disable:4127)
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#pragma warning(default:4127) 
 
 // Constants
 #define ASSETS_FOLDER "./assets"

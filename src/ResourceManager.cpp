@@ -1,5 +1,10 @@
 #include "stdafx.h"
 #include "ResourceManager.h"
+#include <io.h>
+#include <cstdlib>
+#pragma warning(disable:26495 26451)
+#include "rapidjson/document.h"
+#pragma warning(default:26495 26451) 
 #include "Obj_Object.h"
 #include "Geo_Object.h"
 #include "Instance_Object.h"
@@ -41,37 +46,393 @@ ResourceManager::~ResourceManager()
 	m_Objects.clear();
 }
 
-void ResourceManager::Load(const char* pFile)
+void ResourceManager::Load(const char* pfilename)
 {
-	// Attempt to load from file here.
-	if (pFile)
+	// Load from file
+	if (!pfilename || _access(pfilename, 0) == -1) return;
+	m_Filename = pfilename;
+
+	// Open as json
+	std::ifstream jsonfile(pfilename);
+	std::vector<char> jsonbuffer((std::istreambuf_iterator<char>(jsonfile)), std::istreambuf_iterator<char>());
+	jsonbuffer.push_back('\0');
+
+	// Attempt to parse json
+	rapidjson::Document jsondoc;
+	jsondoc.Parse(&jsonbuffer[0]);
+	if (!jsondoc.IsObject()) return;
+
+	// Load any required shaders here
+	if (jsondoc.HasMember("shaders"))
 	{
-		// Store filename.
-		m_Filename = pFile;
-
-		// Open the file for reading.
-		std::FILE* objFile = fopen(pFile, "r");
-		if (objFile)
+		const rapidjson::Value& shaders = jsondoc["shaders"];
+		for (rapidjson::SizeType i = 0; shaders.IsArray() && i < shaders.Size(); i++)
 		{
-			// Read the file until the end. "# are commments to be ignored".
-			while (true)
-			{
-				char buf[BUFSIZ];
-				buf[BUFSIZ - 1] = '\0'; // Null terminated.
-				int check = fscanf(objFile, "%s", buf);
-				if (check == EOF) break;
+			const rapidjson::Value& shader = shaders[i];
 
-				// Shaders
-				if (strcmp(buf, "shader") == 0)
-				{
+			// Shader properties
+			std::string vertex, fragment, name;
 
-				}
-			}
+			// Parse shader properties
+			if (shader.HasMember("vertex"))
+				vertex = shader["vertex"].GetString();
+			if (shader.HasMember("fragment"))
+				fragment = shader["fragment"].GetString();
+			if (shader.HasMember("name"))
+				name = shader["name"].GetString();
+
+			// Load shader
+			if (!vertex.empty() && !fragment.empty() && !name.empty())
+				LoadShader(vertex.c_str(), fragment.c_str(), name.c_str());
 		}
-		return;
 	}
 
-	// Load any required shaders here.
+	// Load any lights here
+	if (jsondoc.HasMember("lights"))
+	{
+		const rapidjson::Value& lights = jsondoc["lights"];
+		for (rapidjson::SizeType i = 0; lights.IsArray() && i < lights.Size(); i++)
+		{
+			const rapidjson::Value& light = lights[i];
+
+			// Light properties
+			std::string type;
+			bool enabled = false;
+			glm::vec3 position = glm::vec3(0.0f,0.0f,0.0f);
+			glm::vec3 ambient = glm::vec3(0.0f, 0.0f, 0.0f);
+			glm::vec3 diffuse = glm::vec3(0.0f, 0.0f, 0.0f);
+			glm::vec3 specular = glm::vec3(0.0f, 0.0f, 0.0f);
+			glm::vec3 direction = glm::vec3(0.0f, 0.0f, 0.0f);
+			float quadratic = 0.0f, spotCutoff = 0.0f, exponent = 0.0f;
+
+			// Parse light properties
+			if (light.HasMember("type"))
+				type = light["type"].GetString();
+			if (light.HasMember("enabled"))
+				enabled = light["enabled"].GetBool();
+			if (light.HasMember("position") &&
+				light["position"].IsArray() &&
+				light["position"].Size() >= 3)
+			{
+				position = glm::vec3(
+					light["position"][0].GetDouble(),
+					light["position"][1].GetDouble(),
+					light["position"][2].GetDouble());
+			}
+			if (light.HasMember("ambient") &&
+				light["ambient"].IsArray() &&
+				light["ambient"].Size() >= 3)
+			{
+				ambient = glm::vec3(
+					light["ambient"][0].GetDouble(),
+					light["ambient"][1].GetDouble(),
+					light["ambient"][2].GetDouble());
+			}
+			if (light.HasMember("diffuse") &&
+				light["diffuse"].IsArray() &&
+				light["diffuse"].Size() >= 3)
+			{
+				diffuse = glm::vec3(
+					light["diffuse"][0].GetDouble(),
+					light["diffuse"][1].GetDouble(),
+					light["diffuse"][2].GetDouble());
+			}
+			if (light.HasMember("specular") &&
+				light["specular"].IsArray() &&
+				light["specular"].Size() >= 3)
+			{
+				specular = glm::vec3(
+					light["specular"][0].GetDouble(),
+					light["specular"][1].GetDouble(),
+					light["specular"][2].GetDouble());
+			}
+			if (light.HasMember("direction") &&
+				light["direction"].IsArray() &&
+				light["direction"].Size() >= 3)
+			{
+				direction = glm::vec3(
+					light["direction"][0].GetDouble(),
+					light["direction"][1].GetDouble(),
+					light["direction"][2].GetDouble());
+			}
+			if (light.HasMember("quadratic"))
+				quadratic = light["quadratic"].GetDouble();
+			if (light.HasMember("spotCutoff"))
+				spotCutoff = light["spotCutoff"].GetDouble();
+			if (light.HasMember("exponent"))
+				exponent = light["exponent"].GetDouble();
+
+			// Do some processing on the type
+			std::transform(type.begin(), type.end(), type.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+
+			// Load light
+			if (type == "directional")
+			{
+				DirectionalLight* pLight = new DirectionalLight();
+				pLight->SetEnabled(enabled);
+				pLight->SetDirection(direction);
+				pLight->SetAmbient(ambient);
+				pLight->SetDiffuse(diffuse);
+				pLight->SetSpecular(specular);
+				AddLight(pLight);
+			}
+			if (type == "point")
+			{
+				PointLight* pLight = new PointLight();
+				pLight->SetEnabled(enabled);
+				pLight->SetPosition(position);
+				pLight->SetAmbient(ambient);
+				pLight->SetDiffuse(diffuse);
+				pLight->SetSpecular(specular);
+				pLight->SetQuadratic(quadratic);
+				AddLight(pLight);
+			}
+			if (type == "spot")
+			{
+				SpotLight* pLight = new SpotLight();
+				pLight->SetEnabled(enabled);
+				pLight->SetPosition(position);
+				pLight->SetAmbient(ambient);
+				pLight->SetDiffuse(diffuse);
+				pLight->SetSpecular(specular);
+				pLight->SetQuadratic(quadratic);
+				pLight->SetDirection(direction);
+				pLight->SetSpotCutoff(spotCutoff / 180.0f * glm::pi<float>()); // Degrees
+				pLight->SetSpotExponent(exponent);
+				AddLight(pLight);
+			}
+		}
+	}
+
+	// Load any cameras here
+	if (jsondoc.HasMember("cameras"))
+	{
+		const rapidjson::Value& cameras = jsondoc["cameras"];
+		for (rapidjson::SizeType i = 0; cameras.IsArray() && i < cameras.Size(); i++)
+		{
+			const rapidjson::Value& camera = cameras[i];
+
+			// Camera properties
+			std::string type;
+			glm::vec3 position = glm::vec3(0.0f, 0.0f, 1.0f);
+			glm::vec3 lookAt = glm::vec3(0.0f, 0.0f, 0.0f);
+			glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+			
+			// Parse camera properties
+			if (camera.HasMember("type"))
+				type = camera["type"].GetString();
+			if (camera.HasMember("position") &&
+				camera["position"].IsArray() &&
+				camera["position"].Size() >= 3)
+			{
+				position = glm::vec3(
+					camera["position"][0].GetDouble(),
+					camera["position"][1].GetDouble(),
+					camera["position"][2].GetDouble());
+			}
+			if (camera.HasMember("lookAt") &&
+				camera["lookAt"].IsArray() &&
+				camera["lookAt"].Size() >= 3)
+			{
+				lookAt = glm::vec3(
+					camera["lookAt"][0].GetDouble(),
+					camera["lookAt"][1].GetDouble(),
+					camera["lookAt"][2].GetDouble());
+			}
+			if (camera.HasMember("up") &&
+				camera["up"].IsArray() &&
+				camera["up"].Size() >= 3)
+			{
+				up = glm::vec3(
+					camera["up"][0].GetDouble(),
+					camera["up"][1].GetDouble(),
+					camera["up"][2].GetDouble());
+			}
+
+			// Do some processing on the type
+			std::transform(type.begin(), type.end(), type.begin(),
+				[](unsigned char c) { return std::tolower(c); });
+
+			// Load camera
+			if (type == "first")
+			{
+				FirstPersonCamera* pCam = new FirstPersonCamera(position);
+				glm::vec3 direction = glm::vec3(glm::rotate(glm::mat4(1.0f), (30.0f / 180.0f * glm::pi<float>()), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));
+				pCam->LockFieldOfView(direction, 180.0f);
+				AddCamera(pCam);
+			}
+			else if (type == "third")
+			{
+				ThirdPersonCamera* pCam = new ThirdPersonCamera(position);
+				AddCamera(pCam);
+			}
+			else
+			{
+				Camera* pCam = new Camera(position, lookAt, up);
+				AddCamera(pCam);
+			}
+		}
+	}
+
+	// Set current camera index if applicable
+	if (jsondoc.HasMember("cameraIndex"))
+	{
+		int index = jsondoc["cameraIndex"].GetInt();
+		SetCurrentCamera(std::max(0, std::min(index, GetNumCameras()-1)));
+	}
+	else
+	{
+		SetCurrentCamera(0);
+	}
+
+	// Load any objects here
+	if (jsondoc.HasMember("objects"))
+	{
+		const rapidjson::Value& objects = jsondoc["objects"];
+		for (rapidjson::SizeType i = 0; objects.IsArray() && i < objects.Size(); i++)
+		{
+			const rapidjson::Value& object = objects[i];
+
+			// Object properties
+			std::string name, obj;
+
+			// Parse object properties
+			if (object.HasMember("name"))
+				name = object["name"].GetString();
+			if (object.HasMember("obj"))
+				obj = object["obj"].GetString();
+
+			// Add object
+			Obj_Object* pObj = new Obj_Object(obj.c_str());
+			AddLoadedObject(name.c_str(), pObj);
+		}
+	}
+
+	// Load any materials here
+	if (jsondoc.HasMember("materials"))
+	{
+		const rapidjson::Value& materials = jsondoc["materials"];
+		for (rapidjson::SizeType i = 0; materials.IsArray() && i < materials.Size(); i++)
+		{
+			const rapidjson::Value& material = materials[i];
+
+			// Material properties
+			std::string name;
+			glm::vec3 ambient = glm::vec3(0.0f);
+			glm::vec3 diffuse = glm::vec3(0.0f);
+			glm::vec3 specular = glm::vec3(0.0f);
+			float shininess = 0.0f;
+
+			// Parse material properties
+			if (material.HasMember("name"))
+				name = material["name"].GetString();
+			if (material.HasMember("ambient") &&
+				material["ambient"].IsArray() &&
+				material["ambient"].Size() >= 3)
+			{
+				ambient = glm::vec3(
+					material["ambient"][0].GetDouble(),
+					material["ambient"][1].GetDouble(),
+					material["ambient"][2].GetDouble());
+			}
+			if (material.HasMember("diffuse") &&
+				material["diffuse"].IsArray() &&
+				material["diffuse"].Size() >= 3)
+			{
+				diffuse = glm::vec3(
+					material["diffuse"][0].GetDouble(),
+					material["diffuse"][1].GetDouble(),
+					material["diffuse"][2].GetDouble());
+			}
+			if (material.HasMember("specular") &&
+				material["specular"].IsArray() &&
+				material["specular"].Size() >= 3)
+			{
+				specular = glm::vec3(
+					material["specular"][0].GetDouble(),
+					material["specular"][1].GetDouble(),
+					material["specular"][2].GetDouble());
+			}
+			if (material.HasMember("shininess"))
+				shininess = material["shininess"].GetDouble();
+
+			// Add material
+			Material* pMat = new Material();
+			pMat->SetAmbient(ambient);
+			pMat->SetDiffuse(diffuse);
+			pMat->SetSpecular(specular);
+			pMat->SetShininess(shininess);
+			AddMaterial(name.c_str(), pMat);
+		}
+	}
+
+	// Load any instances here
+	if (jsondoc.HasMember("instances"))
+	{
+		const rapidjson::Value& instances = jsondoc["instances"];
+		for (rapidjson::SizeType i = 0; instances.IsArray() && i < instances.Size(); i++)
+		{
+			const rapidjson::Value& instance = instances[i];
+			
+			// instance properties
+			std::string name, material;
+			glm::vec3 translate = glm::vec3(0.0f);
+			glm::vec3 rotate = glm::vec3(0.0f);
+			glm::vec3 scale = glm::vec3(1.0f);
+
+			// Parse instance properties
+			if (instance.HasMember("name"))
+				name = instance["name"].GetString();
+			if (instance.HasMember("material"))
+				material = instance["material"].GetString();
+			if (instance.HasMember("translate") &&
+				instance["translate"].IsArray() &&
+				instance["translate"].Size() >= 3)
+			{
+				translate = glm::vec3(
+					instance["translate"][0].GetDouble(),
+					instance["translate"][1].GetDouble(),
+					instance["translate"][2].GetDouble());
+			}
+			if (instance.HasMember("rotate") &&
+				instance["rotate"].IsArray() &&
+				instance["rotate"].Size() >= 3)
+			{
+				rotate = glm::vec3(
+					instance["rotate"][0].GetDouble(),
+					instance["rotate"][1].GetDouble(),
+					instance["rotate"][2].GetDouble());
+			}
+			if (instance.HasMember("scale") &&
+				instance["scale"].IsArray() &&
+				instance["scale"].Size() >= 3)
+			{
+				scale = glm::vec3(
+					instance["scale"][0].GetDouble(),
+					instance["scale"][1].GetDouble(),
+					instance["scale"][2].GetDouble());
+			}
+
+			// Add instance
+			Object *pObj = GetLoadedObject(name.c_str());
+			Material* pMat = GetMaterial(material.c_str());
+			if (pObj)
+			{
+				Instance_Object* pObjInstance = new Instance_Object(*pObj);
+				pObjInstance->Translate(translate);
+				pObjInstance->Rotate(rotate.x, glm::vec3(1.0f, 0.0f, 0.0f));
+				pObjInstance->Rotate(rotate.y, glm::vec3(0.0f, 1.0f, 0.0f));
+				pObjInstance->Rotate(rotate.z, glm::vec3(0.0f, 0.0f, 1.0f));
+				pObjInstance->Scale(scale);
+				if (pMat)
+					pObjInstance->SetMaterial(*pMat);
+				AddObject(pObjInstance);
+			}
+		}
+	}
+
+	/*
 	LoadShader("shaders/object.vert", "shaders/object.frag", "object");
 	LoadShader("shaders/skybox.vert", "shaders/skybox.frag", "skybox");
 
@@ -184,6 +545,7 @@ void ResourceManager::Load(const char* pFile)
 	pTerrain->LoadDataIntoBuffers();
 	AddLoadedObject("terrain", pTerrain);
 	AddObject(pTerrain);
+	*/
 }
 
 void ResourceManager::Save()

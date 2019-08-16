@@ -16,10 +16,10 @@ public:
 	Light()
 		:
 		m_Enabled(false),
-		m_Position(1.0f),
-		m_Ambient(1.0f),
-		m_Diffuse(1.0f),
-		m_Specular(1.0f)
+		m_Position(0.0f),
+		m_Ambient(0.0f),
+		m_Diffuse(0.0f),
+		m_Specular(0.0f)
 	{}
 
 	SETGET(bool, Enabled);
@@ -42,7 +42,7 @@ public:
 	DirectionalLight()
 		:
 		Light(),
-		m_Direction(1.0f)
+		m_Direction(0.0f)
 	{}
 
 	SETGET(glm::vec3, Direction);
@@ -61,7 +61,7 @@ public:
 	PointLight()
 		:
 		Light(),
-		m_Quadratic(1.0f)
+		m_Quadratic(0.0f)
 	{}
 
 	SETGET(float, Quadratic);
@@ -83,10 +83,10 @@ public:
 	SpotLight()
 		:
 		Light(),
-		m_Direction(1.0f),
-		m_Quadratic(1.0f),
-		m_SpotCutoff(1.0f),
-		m_SpotExponent(1.0f)
+		m_Direction(0.0f),
+		m_Quadratic(0.0f),
+		m_SpotCutoff(0.0f),
+		m_SpotExponent(0.0f)
 	{}
 
 	SETGET(glm::vec3, Direction);

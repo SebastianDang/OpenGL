@@ -14,6 +14,6 @@ protected:
 
 public:
 	Land();
-	~Land();
+	virtual ~Land();
 
 };

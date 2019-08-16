@@ -1,0 +1,176 @@
+{
+	"shaders": [
+		{
+			"vertex": "shaders/object.vert",
+			"fragment": "shaders/object.frag",
+			"name": "object"
+		},
+		{
+			"vertex": "shaders/skybox.vert",
+			"fragment": "shaders/skybox.frag",
+			"name": "skybox"
+		}
+	],
+	"lights": [
+		{
+			"type": "directional",
+			"enabled": true,
+			"ambient": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"diffuse": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"specular": [
+				1.0,
+				1.0,
+				1.0
+			],
+			"direction": [
+				-0.2,
+				-1.0,
+				-0.3
+			]
+		},
+		{
+			"type": "point",
+			"enabled": true,
+			"position": [
+				10.0,
+				10.0,
+				10.0
+			],
+			"ambient": [
+				0.2,
+				0.2,
+				0.2
+			],
+			"diffuse": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"specular": [
+				0.8,
+				0.8,
+				0.8
+			],
+			"quadratic": 0.032
+		},
+		{
+			"type": "spot",
+			"enabled": true,
+			"position": [
+				10.0,
+				10.0,
+				10.0
+			],
+			"ambient": [
+				0.2,
+				0.2,
+				0.2
+			],
+			"diffuse": [
+				0.5,
+				0.5,
+				0.5
+			],
+			"specular": [
+				0.8,
+				0.8,
+				0.8
+			],
+			"direction": [
+				-1.0,
+				-1.0,
+				-1.0
+			],
+			"quadratic": 0.032,
+			"spotCutoff": 30.0,
+			"exponent": 1.0
+		}
+	],
+	"cameras": [
+		{
+			"position": [
+				0.0,
+				0.0,
+				20.0
+			],
+			"lookAt": [
+				0.0,
+				0.0,
+				0.0
+			],
+			"up": [
+				0.0,
+				1.0,
+				0.0
+			]
+		},
+		{
+			"type": "first",
+			"position": [
+				0.0,
+				0.0,
+				0.0
+			]
+		},
+		{
+			"type": "third",
+			"position": [
+				0.0,
+				0.0,
+				0.0
+			]
+		}
+	],
+	"cameraIndex": 2,
+	"objects": [
+		{
+			"name": "pod",
+			"obj": "./assets/obj/pod.obj"
+		}
+	],
+	"materials": [
+		{
+			"name": "default",
+			"ambient": [
+				0.24725,
+				0.2245,
+				0.0645
+			],
+			"diffuse": [
+				0.34615,
+				0.3143,
+				0.0903
+			],
+			"specular": [
+				0.797357,
+				0.723991,
+				0.208006
+			],
+			"shininess": 82.3
+		}
+	],
+	"instances": [
+		{
+			"name": "pod",
+			"material": "default",
+			"translate": [0.0,0.0,0.0],
+			"rotate": [0.0,0.0,0.0],
+			"scale": [1.0,1.0,1.0]
+		},
+		{
+			"name": "pod",
+			"material": "default",
+			"translate": [0.0,0.0,10.0],
+			"rotate": [0.0,0.0,0.0],
+			"scale": [1.0,1.0,1.0]
+		}
+	]
+}
