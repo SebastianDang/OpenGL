@@ -7,6 +7,7 @@ This application is under construction to provide more efficient object oriented
 - [x] Shader class for more general use.
 - [x] Object classes to separate different types.
 - [x] Resource Manager to contain all shaders, objects, lighting, camera... etc.
+- [ ] Configuration Manager to contain resources in a single file.
 - [ ] Environment Mapping
 - [ ] Scene Graph
 - [ ] Terrain
