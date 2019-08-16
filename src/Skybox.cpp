@@ -18,7 +18,7 @@ Skybox::~Skybox()
 int Skybox::LoadDataFromFaces(std::vector<const char*> faces)
 {
 	// Store all the faces.
-	for (const char *face : faces) m_Faces.push_back(face);
+	for (const char* face : faces) m_Faces.push_back(face);
 
 	// Load the cubemaps at this step.
 	if ((int)m_Faces.size() > 0)
@@ -30,7 +30,7 @@ int Skybox::LoadDataFromFaces(std::vector<const char*> faces)
 	return LoadDataForCube(SKYBOX_CONSTANT_SIZE);
 }
 
-void Skybox::Render(Shader * pShaderProgram)
+void Skybox::Render(Shader* pShaderProgram)
 {
 	// If the buffers aren't loaded or the shader program isn't initialized, we don't render.
 	if (!IsInit() || !pShaderProgram) return;

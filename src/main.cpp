@@ -10,7 +10,7 @@ void print_versions()
 
 	//If the shading language symbol is defined
 #ifdef GL_SHADING_LANGUAGE_VERSION
-	std::printf("Supported GLSL version is %s.\n", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
+	std::printf("Supported GLSL version is %s.\n", (char*)glGetString(GL_SHADING_LANGUAGE_VERSION));
 #endif
 }
 
@@ -62,7 +62,7 @@ void error_callback(int error, const char* description)
 }
 
 /* Setup callback to handle openGL setup. */
-void setup_callbacks(GLFWwindow *pWindow)
+void setup_callbacks(GLFWwindow* pWindow)
 {
 	// Set the error callback
 	glfwSetErrorCallback(error_callback);

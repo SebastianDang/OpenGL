@@ -162,7 +162,7 @@ int Geo_Object::LoadDataForSphere(float radius, int slices, int stacks)
 	return LoadData(vertices, normals, std::vector<glm::vec2>(), std::vector<unsigned int>(), (int)vertices.size());
 }
 
-void Geo_Object::Render(Shader * pShaderProgram)
+void Geo_Object::Render(Shader* pShaderProgram)
 {
 	// If the buffers aren't loaded or the shader program isn't initialized, we don't render.
 	if (!IsInit() || !pShaderProgram) return;

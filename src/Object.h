@@ -42,7 +42,7 @@ protected:
 public:
 
 	Object();
-	~Object();
+	virtual ~Object(); // Must be declared virtual
 
 	/// <summary>
 	///  Load a ppm file from disk.
@@ -128,5 +128,5 @@ public:
 	/// Render that has to be implemented in any inherited class.
 	/// </summary>
 	/// <param name="pShaderProgram">Shader that's used for this object</param>
-	virtual void Render(Shader* pShaderProgram) = 0;
+	virtual void Render(Shader* pShaderProgram) = 0; // Required!!
 };

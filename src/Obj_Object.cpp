@@ -48,9 +48,10 @@ int Obj_Object::LoadDataFromFile(const char* filepath)
 	std::vector<unsigned int> indices;
 
 	// Read the file until the end. "# are commments to be ignored".
-	while (1) 
+	while (1)
 	{
 		char buf[BUFSIZ];
+		buf[BUFSIZ - 1] = '\0'; // Null terminated.
 		int check = fscanf(objFile, "%s", buf);
 		if (check == EOF) break;
 
@@ -74,7 +75,7 @@ int Obj_Object::LoadDataFromFile(const char* filepath)
 		}
 
 		// Read in lines that start with "vn". Add into normals.
-		if (strcmp(buf, "vn") == 0) 
+		if (strcmp(buf, "vn") == 0)
 		{
 			glm::vec3 normal;
 			if (fscanf(objFile, "%f %f %f\n", &normal.x, &normal.y, &normal.z) >= 3)
@@ -85,7 +86,7 @@ int Obj_Object::LoadDataFromFile(const char* filepath)
 		}
 
 		// Read in lines that start with "vt". Add into textures.
-		if (strcmp(buf, "vt") == 0) 
+		if (strcmp(buf, "vt") == 0)
 		{
 			glm::vec2 texCoord;
 			if (fscanf(objFile, "%f %f\n", &texCoord.x, &texCoord.y) >= 2)
@@ -136,7 +137,7 @@ int Obj_Object::LoadDataFromFile(const char* filepath)
 	return LoadData(vertices, normals, texCoords, indices, (int)vertices.size());
 }
 
-void Obj_Object::Render(Shader * pShaderProgram)
+void Obj_Object::Render(Shader* pShaderProgram)
 {
 	// If the buffers aren't loaded or the shader program isn't initialized, we don't render.
 	if (!IsInit() || !pShaderProgram) return;

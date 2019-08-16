@@ -3,22 +3,22 @@
 #include "Shader.h"
 #include "Light.h"
 #include "Camera.h"
-#include "Obj_Object.h"
-#include "Geo_Object.h"
-#include "Instance_Object.h"
-#include "Skybox.h"
-#include "Terrain.h"
+#include "Material.h"
+#include "Object.h"
 
 class ResourceManager
 {
 public:
+
+	// Constructor/Destructor
 	ResourceManager();
 	~ResourceManager();
 
-	// Load default settings
+	// Load settings
 	// TODO: Load from config file
 	void Load(const char* pFile = nullptr);
 
+	// Save settings
 	// TODO: Save into config file
 	void Save();
 
@@ -36,11 +36,11 @@ public:
 
 	// Light
 	Light* GetLight(int index = 0) { if (index < 0 || index >= (int)m_Lights.size()) return nullptr; return m_Lights[index]; }
-	void AddLight(Light * pLight) { m_Lights.push_back(pLight); }
+	void AddLight(Light* pLight) { m_Lights.push_back(pLight); }
 	int GetNumLights() { return (int)m_Lights.size(); }
 
 	// Camera
-	void AddCamera(Camera * pCamera) { m_Cameras.push_back(pCamera); }
+	void AddCamera(Camera* pCamera) { m_Cameras.push_back(pCamera); }
 	int GetNumCameras() { return (int)m_Cameras.size(); }
 	Camera* GetCamera(int index = 0) { { if (index < 0 || index >= (int)m_Cameras.size()) return nullptr; return m_Cameras[index]; } }
 	Camera* GetCurrentCamera() { return GetCamera(m_CurrentCameraIndex); }
@@ -48,11 +48,12 @@ public:
 
 	// Object
 	Object* GetObject(int index = 0) { if (index < 0 || index >= (int)m_Objects.size()) return nullptr; return m_Objects[index]; }
-	void AddObject(Object * pObject) { m_Objects.push_back(pObject); }
+	void AddObject(Object* pObject) { m_Objects.push_back(pObject); }
 	int GetNumObjects() { return (int)m_Objects.size(); }
 
 private:
 
+	std::string m_Filename = "";
 	std::map<std::string, Shader*> m_Shaders;
 	std::vector<Light*> m_Lights;
 	std::vector<Camera*> m_Cameras;

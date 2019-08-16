@@ -5,7 +5,7 @@ class Skybox : public Geo_Object
 {
 private:
 
-	std::vector<const char *> m_Faces;
+	std::vector<const char*> m_Faces;
 	GLuint m_CubemapTexture;
 
 public:
@@ -22,6 +22,6 @@ public:
 	/// Render the geometry object.
 	/// </summary>
 	/// <param name="pShaderProgram">Shader to render the object</param>
-	void Render(Shader *pShaderProgram);
+	void Render(Shader* pShaderProgram);
 };
 

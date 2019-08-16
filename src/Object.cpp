@@ -24,7 +24,8 @@ unsigned char* Object::LoadPPM(const char* filename, int& width, int& height)
 	char buf[3][BUFSIZE];
 	char* retval_fgets;
 	size_t retval_sscanf;
-	//Read in the ppm file.
+
+	// Read in the ppm file.
 	if ((fp = fopen(filename, "rb")) == NULL)
 	{
 		std::cerr << "error reading ppm file, could not locate " << filename << std::endl;
@@ -32,9 +33,11 @@ unsigned char* Object::LoadPPM(const char* filename, int& width, int& height)
 		height = 0;
 		return NULL;
 	}
-	//Read magic number:
+
+	// Read magic number:
 	retval_fgets = fgets(buf[0], BUFSIZE, fp);
-	//Read width and height:
+
+	// Read width and height:
 	do
 	{
 		retval_fgets = fgets(buf[0], BUFSIZE, fp);
@@ -47,7 +50,8 @@ unsigned char* Object::LoadPPM(const char* filename, int& width, int& height)
 	{
 		retval_fgets = fgets(buf[0], BUFSIZE, fp);
 	} while (buf[0][0] == '#');
-	//Read image data:
+
+	// Read image data:
 	rawData = new unsigned char[width * height * 3];
 	read = (unsigned int)fread(rawData, width * height * 3, 1, fp);
 	fclose(fp);
@@ -69,7 +73,7 @@ GLuint Object::LoadCubemap(std::vector<const char*> faces)
 
 	// Define variables to hold height map's width, height, pixel information.
 	int width = 0, height = 0;
-	unsigned char * image;
+	unsigned char* image;
 
 	// Create ID for texture.
 	glGenTextures(1, &textureID);
@@ -106,6 +110,7 @@ GLuint Object::LoadCubemap(std::vector<const char*> faces)
 	// Use bilinear interpolation:
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 	// Use clamp to edge to hide skybox edges:
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);//X
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);//Y
@@ -120,11 +125,11 @@ GLuint Object::LoadCubemap(std::vector<const char*> faces)
 
 void Object::ResetData()
 {
-	m_Data.clear(); 
-	m_Indices.clear(); 
+	m_Data.clear();
+	m_Indices.clear();
 }
 
-int Object::LoadData(const std::vector<glm::vec3> &vertices, const std::vector<glm::vec3> &normals, const std::vector<glm::vec2> &texCoords, const std::vector<unsigned int> &indices, const int &count)
+int Object::LoadData(const std::vector<glm::vec3>& vertices, const std::vector<glm::vec3>& normals, const std::vector<glm::vec2>& texCoords, const std::vector<unsigned int>& indices, const int& count)
 {
 	// Let us enforce that count is always less than or equal to the number of elements.
 	int vertices_size = (int)vertices.size();
@@ -196,22 +201,22 @@ void Object::ResetToWorld()
 	m_ToWorld = glm::mat4(1.0f); // Identity matrix
 }
 
-void Object::Translate(const glm::vec3 &value)
+void Object::Translate(const glm::vec3& value)
 {
 	m_ToWorld = glm::translate(glm::mat4(1.0f), value) * m_ToWorld;
 }
 
-void Object::Rotate(const float degree, const glm::vec3 &axis)
+void Object::Rotate(const float degree, const glm::vec3& axis)
 {
 	m_ToWorld = glm::rotate(glm::mat4(1.0f), (degree / 180.0f * glm::pi<float>()), axis) * m_ToWorld;
 }
 
-void Object::Scale(const glm::vec3 &value)
+void Object::Scale(const glm::vec3& value)
 {
 	m_ToWorld = glm::scale(glm::mat4(1.0f), value) * m_ToWorld;
 }
 
-void Object::SetPosition(const glm::vec3 & value)
+void Object::SetPosition(const glm::vec3& value)
 {
 	m_ToWorld[3] = glm::vec4(value, 1.0f);
 }

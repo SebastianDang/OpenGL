@@ -40,6 +40,7 @@ void Camera::Translate(glm::vec3 value)
 void Camera::Rotate(glm::vec3 axis, float angle)
 {
 	// TODO: Implement
+	axis; angle;
 	Update(m_Position, m_Lookat, m_Up);
 }
 
@@ -71,7 +72,7 @@ void ThirdPersonCamera::RotateAroundPoint(glm::vec3 point, glm::vec3 v, glm::vec
 	float cur_position_length_x = glm::length(cur_position_x);
 
 	// Calculate the new (x, z) position (added to the lookat for proper position).
-	glm::vec3 position_x = translate_v.x*m_Right;
+	glm::vec3 position_x = translate_v.x * m_Right;
 	glm::vec3 new_position_x = cur_position_x + position_x;
 	new_position_x = m_Lookat + (cur_position_length_x * glm::normalize(new_position_x));
 
@@ -83,7 +84,7 @@ void ThirdPersonCamera::RotateAroundPoint(glm::vec3 point, glm::vec3 v, glm::vec
 	float cur_position_length_y = glm::length(cur_position_y);
 
 	// Calculate the new (y) position.
-	glm::vec3 position_y = translate_v.y*m_Up;
+	glm::vec3 position_y = translate_v.y * m_Up;
 	glm::vec3 new_position_y = cur_position_y + position_y;
 	new_position_y = m_Lookat + (cur_position_length_y * glm::normalize(new_position_y));
 	glm::vec3 new_position_distance = new_position_y - m_Lookat;
@@ -92,7 +93,7 @@ void ThirdPersonCamera::RotateAroundPoint(glm::vec3 point, glm::vec3 v, glm::vec
 	glm::vec3 horizontal_pos = glm::vec3(m_Position.x, 0.0f, m_Position.z);
 	glm::vec3 horizontal_lookat = glm::vec3(m_Lookat.x, 0.0f, m_Lookat.z);
 	glm::vec3 horizontal_distance = horizontal_pos - horizontal_lookat;
-	float angle = glm::dot(new_position_distance, horizontal_distance) / (glm::length(new_position_distance)*glm::length(horizontal_distance)); // Calculate the angle from the floor.
+	float angle = glm::dot(new_position_distance, horizontal_distance) / (glm::length(new_position_distance) * glm::length(horizontal_distance)); // Calculate the angle from the floor.
 
 	// Update the new camera position for y. Check if the angle is greater than MIN_CAMERA_PITCH_Y and less than MAX_CAMERA_PITCH
 	if (angle >= glm::radians(MAX_CAMERA_PITCH) && new_position_y.y >= MIN_CAMERA_PITCH_Y)

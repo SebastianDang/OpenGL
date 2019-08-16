@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "ResourceManager.h"
 #include "Shader.h"
+#include "Skybox.h"
 
 using namespace std;
 
@@ -29,7 +30,7 @@ glm::mat4 Window::P; // Perspective.
 glm::mat4 Window::V; // View.
 
 // Reference to the main ResourceManager, to get all diferent objects/things in our environment.
-ResourceManager *pManager = nullptr;
+ResourceManager* pManager = nullptr;
 
 // Create window is called to initialize the window.
 GLFWwindow* Window::create_window(int width, int height)
@@ -63,7 +64,7 @@ GLFWwindow* Window::create_window(int width, int height)
 
 	// Get the width and height of the framebuffer to properly resize the window
 	glfwGetFramebufferSize(window, &width, &height);
-	
+
 	// Call the resize callback to make sure things get drawn immediately
 	Window::resize_callback(window, width, height);
 
@@ -91,7 +92,7 @@ void Window::Stop()
 }
 
 // Window callback function on a resize. Resets the perspective for proper coordinate transformation.
-void Window::resize_callback(GLFWwindow* window, int width, int height)
+void Window::resize_callback(GLFWwindow* /*window*/, int width, int height)
 {
 	// Update width and height
 	Window::Width = width;
@@ -100,7 +101,7 @@ void Window::resize_callback(GLFWwindow* window, int width, int height)
 	// Set the viewport size
 	glViewport(0, 0, width, height);
 
-	if (height > 0) 
+	if (height > 0)
 		Window::P = glm::perspective(Window::FieldOfView, (float)width / (float)height, Window::NearPlane, Window::FarPlane);
 
 	// Set the LastPoint to be the center.
@@ -138,10 +139,10 @@ void Window::display_callback(GLFWwindow* window)
 		// For each light
 		for (int l = 0; l < pManager->GetNumLights(); l++)
 		{
-			Light *pLight = pManager->GetLight(l);
+			Light* pLight = pManager->GetLight(l);
 			if (pLight)
 			{
-				Shader *pShader = pManager->GetShader("object");
+				Shader* pShader = pManager->GetShader("object");
 				if (pShader)
 				{
 					pShader->Use();
@@ -156,13 +157,13 @@ void Window::display_callback(GLFWwindow* window)
 		for (int i = 0; i < pManager->GetNumObjects(); i++)
 		{
 			// Get the object out.
-			Object *pObject = pManager->GetObject(i);
+			Object* pObject = pManager->GetObject(i);
 
 			// Special case for skybox.
-			Skybox *pSky = dynamic_cast<Skybox*>(pObject);
+			Skybox* pSky = dynamic_cast<Skybox*>(pObject);
 			if (pSky)
 			{
-				Shader *pSkyShader = pManager->GetShader("skybox");
+				Shader* pSkyShader = pManager->GetShader("skybox");
 				if (pSkyShader)
 				{
 					pSkyShader->Use();
@@ -173,7 +174,7 @@ void Window::display_callback(GLFWwindow* window)
 			}
 			else
 			{
-				Shader *pShader = pManager->GetShader("object");
+				Shader* pShader = pManager->GetShader("object");
 				if (pShader)
 				{
 					pShader->Use();
@@ -191,11 +192,12 @@ void Window::display_callback(GLFWwindow* window)
 }
 
 /* Handle Key input. */
-void Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Window::key_callback(GLFWwindow* window, int key, int /*scancode*/, int action, int /*mods*/)
 {
 	// Define shift keys for capital letters.
 	int Lshift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
 	int Rshift = glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT);
+	Lshift; Rshift;
 
 	// Define movement keys.
 	int wKey = glfwGetKey(window, GLFW_KEY_W);
@@ -245,7 +247,7 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	// Update current mouse position.
 	glfwGetCursorPos(window, &xpos, &ypos);
-	
+
 	// Get current mouse position.
 	Window::CurrPoint = glm::vec3(xpos, ypos, 0.0f);
 
@@ -254,7 +256,7 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 	{
 		if (pManager && pManager->GetCurrentCamera())
 		{
-			ThirdPersonCamera *pCamera = dynamic_cast<ThirdPersonCamera*>(pManager->GetCurrentCamera());
+			ThirdPersonCamera* pCamera = dynamic_cast<ThirdPersonCamera*>(pManager->GetCurrentCamera());
 			if (!pCamera) return;
 			pCamera->RotateAroundPoint(pCamera->GetFollowPoint(), Window::LastPoint, Window::CurrPoint);
 			Window::V = pCamera->GetMatrix();
@@ -266,7 +268,7 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 	{
 		if (pManager && pManager->GetCurrentCamera())
 		{
-			FirstPersonCamera *pCamera = dynamic_cast<FirstPersonCamera*>(pManager->GetCurrentCamera());
+			FirstPersonCamera* pCamera = dynamic_cast<FirstPersonCamera*>(pManager->GetCurrentCamera());
 			if (!pCamera) return;
 			pCamera->Move(Window::LastPoint, Window::CurrPoint);
 			Window::V = pCamera->GetMatrix();
@@ -275,7 +277,7 @@ void Window::cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 }
 
 /* Handle mouse button input. This handles the status if left button or right button was clicked and held. */
-void Window::cursor_button_callback(GLFWwindow* window, int button, int action, int mods)
+void Window::cursor_button_callback(GLFWwindow* window, int /*button*/, int /*action*/, int /*mods*/)
 {
 	// Define left and right clicks.
 	int left_click = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
@@ -302,11 +304,11 @@ void Window::cursor_button_callback(GLFWwindow* window, int button, int action, 
 }
 
 /* Handle mouse scroll input. */
-void Window::cursor_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void Window::cursor_scroll_callback(GLFWwindow* /*window*/, double /*xoffset*/, double yoffset)
 {
 	if (pManager && pManager->GetCurrentCamera())
 	{
-		ThirdPersonCamera *pCamera = dynamic_cast<ThirdPersonCamera*>(pManager->GetCurrentCamera());
+		ThirdPersonCamera* pCamera = dynamic_cast<ThirdPersonCamera*>(pManager->GetCurrentCamera());
 		if (!pCamera) return;
 		pCamera->Zoom(yoffset);
 		Window::V = pCamera->GetMatrix();
